@@ -1,4 +1,4 @@
-package org.example.fooddelivery.data.repoImpls;
+package org.example.fooddelivery.data.repoImpls.collectionFramework;
 
 import org.example.fooddelivery.domain.model.Delivery;
 import org.example.fooddelivery.domain.repo.DeliveryRepo;

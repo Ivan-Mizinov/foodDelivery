@@ -1,22 +1,27 @@
-package org.example.fooddelivery.data.repoImpls;
+package org.example.fooddelivery.data.repoImpls.collectionFramework;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.fooddelivery.domain.model.User;
 import org.example.fooddelivery.domain.repo.UserRepo;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.LinkedList;
 
+@Repository("URwLL")
+@Slf4j
 public class UserRepoImplWithLinkedList implements UserRepo {
     private final LinkedList<User> users = new LinkedList<>();
     @Override
     public User saveUser(User user) {
         users.add(user);
-        System.out.println("User created with LinkedList");
+        log.info("User created with LinkedList");
         return user;
     }
 
     @Override
     public void deleteUser(User user) {
-        System.out.println("User deleted from LinkedList");
+        log.info("User deleted from LinkedList");
         users.remove(user);
     }
 

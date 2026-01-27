@@ -1,20 +1,27 @@
 package org.example.fooddelivery.presentation.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.example.fooddelivery.domain.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.example.fooddelivery.presentation.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Controller
-@RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserService service;
 
-    public User createUser(User user) {
-        return userService.saveUser(user);
+    public UserController(UserService service) {
+        this.service = service;
     }
 
-    public void deleteUser(User user) {
-        userService.deleteUser(user);
+    @GetMapping("/new_user")
+    public String newUser(
+            @RequestParam String name,
+            Model model
+    ) {
+        model.addAttribute("name", name);
+        return "new_user";
     }
 }

@@ -1,4 +1,4 @@
-package org.example.fooddelivery.data.repoImpls;
+package org.example.fooddelivery.data.repoImpls.collectionFramework;
 
 import org.example.fooddelivery.domain.model.MenuCategory;
 import org.example.fooddelivery.domain.model.MenuItem;

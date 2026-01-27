@@ -3,7 +3,9 @@ package org.example.fooddelivery.conf;
 import org.example.fooddelivery.domain.model.User;
 import org.example.fooddelivery.presentation.controller.UserController;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ApplicationStartupRunner implements CommandLineRunner {
     private final UserController userController;
 
@@ -12,8 +14,9 @@ public class ApplicationStartupRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
-        userController.createUser(new User());
-        userController.deleteUser(new User());
+    public void run(String... args) {
+//        User user = new User();
+//        userController.createUser(user);
+//        userController.deleteUser(user);
     }
 }

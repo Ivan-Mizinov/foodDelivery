@@ -1,24 +1,28 @@
-package org.example.fooddelivery.data.repoImpls;
+package org.example.fooddelivery.data.repoImpls.collectionFramework;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.fooddelivery.domain.model.User;
 import org.example.fooddelivery.domain.repo.UserRepo;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository("URwAL")
+@Slf4j
 public class UserRepoImpl implements UserRepo {
     private final List<User> users = new ArrayList<>();
 
     @Override
     public User saveUser(User user) {
         users.add(user);
-        System.out.println("User created");
+        log.info("User created with ArrayList");
         return user;
     }
 
     @Override
     public void deleteUser(User user) {
-        System.out.println("User deleted");
+        log.info("User deleted with ArrayList");
         users.remove(user);
     }
 
