@@ -1,5 +1,5 @@
 package org.example.fooddelivery.domain.model;
 
-public enum MenuSection {
+public enum MenuCategory {
     MainMenu, DrinksMenu, DessertsMenu
 }
