@@ -3,22 +3,20 @@ package org.example.fooddelivery.data.repoImpls;
 import org.example.fooddelivery.domain.model.User;
 import org.example.fooddelivery.domain.repo.UserRepo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
-public class UserRepoImpl implements UserRepo {
-    private final List<User> users = new ArrayList<>();
-
+public class UserRepoImplWithLinkedList implements UserRepo {
+    private final LinkedList<User> users = new LinkedList<>();
     @Override
     public User saveUser(User user) {
         users.add(user);
-        System.out.println("User created");
+        System.out.println("User created with LinkedList");
         return user;
     }
 
     @Override
     public void deleteUser(User user) {
-        System.out.println("User deleted");
+        System.out.println("User deleted from LinkedList");
         users.remove(user);
     }
 
@@ -32,8 +30,11 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public User updateUser(User user) {
-        int index = users.indexOf(user);
-        if (index != -1) users.set(index, user);
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).equals(user)) {
+                users.set(i, user);
+            }
+        }
         return user;
     }
 }

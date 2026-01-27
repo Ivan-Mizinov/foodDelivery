@@ -4,7 +4,7 @@ import org.example.fooddelivery.domain.model.User;
 import org.example.fooddelivery.domain.repo.UserRepo;
 
 public class UserInterractor {
-    private final UserRepo userRepo;
+    protected final UserRepo userRepo;
 
     public UserInterractor(UserRepo userRepo) {
         this.userRepo = userRepo;
