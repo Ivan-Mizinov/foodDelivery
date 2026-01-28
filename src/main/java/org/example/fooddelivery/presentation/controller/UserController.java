@@ -1,24 +1,21 @@
 package org.example.fooddelivery.presentation.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.example.fooddelivery.conf.AuthUtils;
 import org.example.fooddelivery.domain.model.User;
+import org.example.fooddelivery.presentation.service.SessionInfoService;
 import org.example.fooddelivery.presentation.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/users")
 public class UserController {
     private final UserService service;
     private final AuthUtils authUtils;
-
-    public UserController(UserService service, AuthUtils authUtils) {
-        this.service = service;
-        this.authUtils = authUtils;
-    }
+    private final SessionInfoService sessionInfoService;
 
     @GetMapping("/register")
     public String newUser(
@@ -36,7 +33,8 @@ public class UserController {
         String encodedPassword = authUtils.encodePassword(user.getPassword());
         user.setPassword(encodedPassword);
         service.createUser(user);
-        log.info(user.toString());
+
+        sessionInfoService.setUserInfo(user);
         model.addAttribute("msg", "User registered successfully");
         return "redirect:/users/login";
     }
@@ -59,6 +57,7 @@ public class UserController {
         try {
             User user = service.getUserByEmail(email);
             if (authUtils.authenticate(password, user.getPassword())) {
+                sessionInfoService.setUserInfo(user);
                 return "redirect:/menu";
             }
             model.addAttribute("error", "Invalid email or password");

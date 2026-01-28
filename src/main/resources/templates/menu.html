@@ -22,7 +22,7 @@
 				<input type="number"
 				       th:id="|quantity_${item.id}|"
 				       th:name="quantities"
-				       min="1" disabled>
+				       min="1" value="1" disabled>
 			</div>
 		</div>
 	</div> <br>
@@ -37,7 +37,7 @@
     function toggleQuantity(checkbox) {
         const quantityInput = checkbox.parentElement.querySelector('input[type=number]');
         quantityInput.disabled = !checkbox.checked;
-        if (!checkbox.checked) {
+        if (checkbox.checked && quantityInput.value === '') {
             quantityInput.value = 1;
         }
     }
