@@ -2,10 +2,12 @@ package org.example.fooddelivery.data.repoImpls.collectionFramework;
 
 import org.example.fooddelivery.domain.model.Delivery;
 import org.example.fooddelivery.domain.repo.DeliveryRepo;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class DeliveryRepoImpl implements DeliveryRepo {
     private final List<Delivery> deliveries = new ArrayList<>();
     @Override

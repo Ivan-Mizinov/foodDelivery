@@ -4,10 +4,12 @@ import org.example.fooddelivery.domain.model.Order;
 import org.example.fooddelivery.domain.model.OrderStatus;
 import org.example.fooddelivery.domain.model.User;
 import org.example.fooddelivery.domain.repo.OrderRepo;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class OrderRepoImpl implements OrderRepo {
     private final List<Order> orders=new ArrayList<>();
 
