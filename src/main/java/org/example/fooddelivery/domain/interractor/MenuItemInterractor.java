@@ -21,7 +21,7 @@ public class MenuItemInterractor {
         return repo.updateMenuItem(menuItem);
     }
 
-    public List<MenuItem> getMenuItemsBySection(MenuCategory category){
+    public List<MenuItem> getMenuItemsByCategory(MenuCategory category){
         return repo.getMenuItemsByCategory(category);
     }
 

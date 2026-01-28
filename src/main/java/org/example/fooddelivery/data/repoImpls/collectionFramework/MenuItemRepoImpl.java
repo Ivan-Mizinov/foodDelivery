@@ -3,10 +3,12 @@ package org.example.fooddelivery.data.repoImpls.collectionFramework;
 import org.example.fooddelivery.domain.model.MenuCategory;
 import org.example.fooddelivery.domain.model.MenuItem;
 import org.example.fooddelivery.domain.repo.MenuItemRepo;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class MenuItemRepoImpl implements MenuItemRepo {
     private final List<MenuItem> items = new ArrayList<>();
     @Override
