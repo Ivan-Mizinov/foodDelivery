@@ -10,7 +10,7 @@ public class UserInterractor {
         this.userRepo = userRepo;
     }
 
-    public User saveUser(User user) {
+    public User createUser(User user) {
         return userRepo.saveUser(user);
     }
 

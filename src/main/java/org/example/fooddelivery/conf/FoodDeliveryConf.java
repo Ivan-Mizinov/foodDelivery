@@ -1,23 +1,16 @@
 package org.example.fooddelivery.conf;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class FoodDeliveryConf {
 
-//    @Bean
-//    public UserRepo userRepo() {
-//        return new UserRepoImpl();
-//    }
-//
-//    @Bean
-//    @Primary
-//    public UserRepo userRepoLinkedList() {
-//        return new UserRepoImplWithLinkedList();
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-//    @Bean
-//    public CommandLineRunner commandlineRunner(UserController userController) {
-//        return new ApplicationStartupRunner(userController);
-//    }
 }
