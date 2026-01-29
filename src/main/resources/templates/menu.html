@@ -1,44 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
-	<title>Menu</title>
+	<title th:text="#{menu.title}">Menu</title>
 </head>
 <body>
-	<h1>Menu</h1>
+	<div>
+		<a href="?lang=en">English</a> | <a href="?lang=ru">Русский</a>
+	</div>
+
+	<h1 th:text="#{menu.title}">Menu</h1>
 
 <form th:action="@{/order}" th:method="post">
 	<div th:each="section: ${menuItemsByCategory}">
-		<h2 th:text="${section.key}">Section:</h2>
+		<h2 th:text="#{${section.key}}">Section:</h2>
 		<div class="menu-section">
 			<div th:each="item : ${section.value}" class="menu-item">
-				<input type="checkbox"
-				       th:id="|item_${item.id}|"
-				       th:name="selectedItemsIds"
-				       th:value="${item.id}"
-				       onchange="toggleQuantity(this)">
-				<label th:for="|item_${item.id}|" th:text="${item.name}"></label>
-				<span class="price" th:text="${item.price} + 'руб.'"></span>
-				<input type="number"
-				       th:id="|quantity_${item.id}|"
-				       th:name="quantities"
-				       min="1" value="1" disabled>
+				<label>
+                    <input type="checkbox"
+                           th:id="|item_${item.id}|"
+                           th:name="selectedItemsIds"
+                           th:value="${item.id}"
+                           onchange="toggleQuantity(this)">
+                    <span th:text="${item.name}"></span>
+                    <span class="price" th:text="${item.price} + 'руб.'"></span>
+				</label>
+				<label class="quantity-label">
+                    <input type="number"
+                           th:id="|quantity_${item.id}|"
+                           th:name="quantities"
+                           min="1" value="1"
+                           th:attr="data-item-id=${item.id}">
+				</label>
 			</div>
 		</div>
 	</div> <br>
-	<button type="submit">Place order</button>
+	<div th:if="${error}" style="color: red">
+			<p th:text="${error}"></p>
+	</div>
+	<button type="submit" th:text="#{menu.submit}">Place order</button>
 </form>
-
-<div th:if="${error}" style="color: red">
-	<p th:text="${error}"></p>
-</div>
 
 <script>
     function toggleQuantity(checkbox) {
         const quantityInput = checkbox.parentElement.querySelector('input[type=number]');
-        quantityInput.disabled = !checkbox.checked;
-        if (checkbox.checked && quantityInput.value === '') {
-            quantityInput.value = 1;
+
+        if (checkbox.checked) {
+            quantityInput.style.display = 'inline-block';
+            if (quantityInput.value === '' || parseInt(quantityInput.value) < 1) {
+                quantityInput.value = 1;
+            }
+        } else {
+            quantityInput.style.display = 'none';
         }
     }
 </script>
