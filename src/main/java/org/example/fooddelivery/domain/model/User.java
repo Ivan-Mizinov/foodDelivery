@@ -4,7 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.Data;
 
 @Data
-public class User {
+public class User implements IUser {
     private Long id;
     private String name;
     private String email;

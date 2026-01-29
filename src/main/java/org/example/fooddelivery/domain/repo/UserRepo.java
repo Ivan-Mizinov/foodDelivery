@@ -1,10 +1,10 @@
 package org.example.fooddelivery.domain.repo;
 
-import org.example.fooddelivery.domain.model.User;
+import org.example.fooddelivery.domain.model.IUser;
 
 public interface UserRepo {
-    User saveUser(User user);
-    User updateUser(User user);
-    User getUserByEmail(String email);
-    void deleteUser(User user);
+    IUser saveUser(IUser user);
+    IUser updateUser(IUser user);
+    IUser getUserByEmail(String email);
+    void deleteUser(IUser user);
 }

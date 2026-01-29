@@ -69,7 +69,7 @@ public class OrderAndDeliveryController {
 
     @PostMapping("/order/submit")
     public String orderSubmit() {
-        User user = userService.getUserByEmail(sessionInfoService.getEmail());
+        IUser user = userService.getUserByEmail(sessionInfoService.getEmail());
         user.setAddress(sessionInfoService.getAddress());
         user.setPhone(sessionInfoService.getPhone());
         user.setName(sessionInfoService.getUsername());

@@ -2,8 +2,8 @@ package org.example.fooddelivery.presentation.service;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.fooddelivery.domain.model.IUser;
 import org.example.fooddelivery.domain.model.MenuItem;
-import org.example.fooddelivery.domain.model.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
@@ -21,7 +21,7 @@ public class SessionInfoService {
     private String email;
     private List<MenuItem> cart;
 
-    public void setUserInfo(User user) {
+    public void setUserInfo(IUser user) {
         setUsername(user.getName());
         setPhone(user.getPhone());
         setAddress(user.getAddress());

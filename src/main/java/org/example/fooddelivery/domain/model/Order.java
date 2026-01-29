@@ -13,7 +13,7 @@ public class Order {
     private Long id;
     private LocalDateTime orderDate;
     private OrderStatus status;
-    private User user;
+    private IUser user;
     private List<MenuItem> itemList;
     private BigDecimal totalPrice;
 }

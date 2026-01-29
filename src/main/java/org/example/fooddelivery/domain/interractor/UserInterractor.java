@@ -1,6 +1,6 @@
 package org.example.fooddelivery.domain.interractor;
 
-import org.example.fooddelivery.domain.model.User;
+import org.example.fooddelivery.domain.model.IUser;
 import org.example.fooddelivery.domain.repo.UserRepo;
 
 public class UserInterractor {
@@ -10,19 +10,19 @@ public class UserInterractor {
         this.userRepo = userRepo;
     }
 
-    public User createUser(User user) {
+    public IUser createUser(IUser user) {
         return userRepo.saveUser(user);
     }
 
-    public void deleteUser(User user) {
+    public void deleteUser(IUser user) {
         userRepo.deleteUser(user);
     }
 
-    public User getUserByEmail(String email) {
+    public IUser getUserByEmail(String email) {
         return userRepo.getUserByEmail(email);
     }
 
-    public User updateUser(User user) {
+    public IUser updateUser(IUser user) {
         return userRepo.updateUser(user);
     }
 }
