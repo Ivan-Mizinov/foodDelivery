@@ -9,6 +9,7 @@ import java.util.List;
 public interface OrderRepo {
     Order saveOrder(Order order);
     Order updateOrder(Order order);
+    Order updateOrderStatus(Long orderId, OrderStatus status);
     List<Order> getOrdersByUser(User user);
     List<Order> getOrdersByStatus(OrderStatus status);
 }
