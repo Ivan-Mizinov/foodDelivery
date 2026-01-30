@@ -1,9 +1,9 @@
 package org.example.fooddelivery.domain.repo;
 
-import org.example.fooddelivery.domain.model.Delivery;
+import org.example.fooddelivery.domain.model.IDelivery;
 
 public interface DeliveryRepo {
-    Delivery saveDelivery(Delivery delivery);
-    Delivery updateDelivery(Delivery delivery);
-    Delivery getDeliveryById(Long id);
+    IDelivery saveDelivery(IDelivery delivery);
+    IDelivery updateDelivery(IDelivery delivery);
+    IDelivery getDeliveryById(Long id);
 }

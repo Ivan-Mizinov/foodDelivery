@@ -1,8 +1,6 @@
 package org.example.fooddelivery.domain.interractor;
 
-import org.example.fooddelivery.domain.model.Order;
-import org.example.fooddelivery.domain.model.OrderStatus;
-import org.example.fooddelivery.domain.model.User;
+import org.example.fooddelivery.domain.model.*;
 import org.example.fooddelivery.domain.repo.OrderRepo;
 
 import java.util.List;
@@ -14,23 +12,23 @@ public class OrderInterractor {
         this.repo = repo;
     }
 
-    public Order createOrder(Order order) {
+    public IOrder createOrder(IOrder order) {
         return repo.saveOrder(order);
     }
 
-    public Order updateOrderStatus(Long orderId, OrderStatus status) {
+    public IOrder updateOrderStatus(Long orderId, OrderStatus status) {
         return repo.updateOrderStatus(orderId, status);
     }
 
-    public Order changeOrder(Order order) {
+    public IOrder changeOrder(IOrder order) {
         return repo.updateOrder(order);
     }
 
-    public List<Order> getOrdersByUser(User user) {
+    public List<IOrder> getOrdersByUser(IUser user) {
         return repo.getOrdersByUser(user);
     }
 
-    public List<Order> getOrdersByStatus(OrderStatus status) {
+    public List<IOrder> getOrdersByStatus(OrderStatus status) {
         return repo.getOrdersByStatus(status);
     }
 }

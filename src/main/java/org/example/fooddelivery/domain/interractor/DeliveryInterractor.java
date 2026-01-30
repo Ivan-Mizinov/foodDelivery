@@ -1,6 +1,6 @@
 package org.example.fooddelivery.domain.interractor;
 
-import org.example.fooddelivery.domain.model.Delivery;
+import org.example.fooddelivery.domain.model.IDelivery;
 import org.example.fooddelivery.domain.repo.DeliveryRepo;
 
 public class DeliveryInterractor {
@@ -10,15 +10,15 @@ public class DeliveryInterractor {
         this.repo = repo;
     }
 
-    public Delivery createDelivery(Delivery delivery) {
+    public IDelivery createDelivery(IDelivery delivery) {
         return repo.saveDelivery(delivery);
     }
 
-    public Delivery changeDelivery(Delivery delivery) {
+    public IDelivery changeDelivery(IDelivery delivery) {
         return repo.updateDelivery(delivery);
     }
 
-    public Delivery getDeliveryById(Long id) {
+    public IDelivery getDeliveryById(Long id) {
         return repo.getDeliveryById(id);
     }
 }

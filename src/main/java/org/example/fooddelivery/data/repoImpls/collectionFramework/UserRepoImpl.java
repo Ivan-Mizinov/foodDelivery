@@ -8,14 +8,17 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository("URwAL")
 @Slf4j
 public class UserRepoImpl implements UserRepo {
     private final List<IUser> users = new ArrayList<>();
+    private final AtomicLong nextId = new AtomicLong(1);
 
     @Override
     public IUser saveUser(IUser user) {
+        user.setId(nextId.getAndIncrement());
         users.add(user);
         log.info("User created with ArrayList");
         return user;

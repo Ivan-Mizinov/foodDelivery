@@ -1,31 +1,34 @@
 package org.example.fooddelivery.data.repoImpls.collectionFramework;
 
+import org.example.fooddelivery.domain.model.IMenuItem;
 import org.example.fooddelivery.domain.model.MenuCategory;
-import org.example.fooddelivery.domain.model.MenuItem;
 import org.example.fooddelivery.domain.repo.MenuItemRepo;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class MenuItemRepoImpl implements MenuItemRepo {
-    private final List<MenuItem> items = new ArrayList<>();
+    private final List<IMenuItem> items = new ArrayList<>();
+    private final AtomicLong nextId = new AtomicLong(1);
     @Override
-    public MenuItem saveMenuItem(MenuItem menuItem) {
+    public IMenuItem saveMenuItem(IMenuItem menuItem) {
+        menuItem.setId(nextId.getAndIncrement());
         items.add(menuItem);
         return menuItem;
     }
 
     @Override
-    public MenuItem updateMenuItem(MenuItem menuItem) {
+    public IMenuItem updateMenuItem(IMenuItem menuItem) {
         int index = items.indexOf(menuItem);
         if (index != -1) items.set(index, menuItem);
         return menuItem;
     }
 
     @Override
-    public MenuItem getMenuItemById(Long id) {
+    public IMenuItem getMenuItemById(Long id) {
         return items.stream()
                 .filter(menuItem -> menuItem.getId().equals(id))
                 .findFirst()
@@ -33,14 +36,14 @@ public class MenuItemRepoImpl implements MenuItemRepo {
     }
 
     @Override
-    public List<MenuItem> getMenuItemsByCategory(MenuCategory category) {
+    public List<IMenuItem> getMenuItemsByCategory(MenuCategory category) {
         return items.stream()
                 .filter(menuItem -> menuItem.getCategory().equals(category))
                 .toList();
     }
 
     @Override
-    public void deleteMenuItem(MenuItem menuItem) {
+    public void deleteMenuItem(IMenuItem menuItem) {
         items.remove(menuItem);
     }
 }

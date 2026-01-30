@@ -1,7 +1,7 @@
 package org.example.fooddelivery.domain.interractor;
 
+import org.example.fooddelivery.domain.model.IMenuItem;
 import org.example.fooddelivery.domain.model.MenuCategory;
-import org.example.fooddelivery.domain.model.MenuItem;
 import org.example.fooddelivery.domain.repo.MenuItemRepo;
 
 import java.util.List;
@@ -13,19 +13,19 @@ public class MenuItemInterractor {
         this.repo = repo;
     }
 
-    public MenuItem saveMenuItem(MenuItem menuItem){
+    public IMenuItem saveMenuItem(IMenuItem menuItem){
         return repo.saveMenuItem(menuItem);
     }
 
-    public MenuItem updateMenuItem(MenuItem menuItem){
+    public IMenuItem updateMenuItem(IMenuItem menuItem){
         return repo.updateMenuItem(menuItem);
     }
 
-    public List<MenuItem> getMenuItemsByCategory(MenuCategory category){
+    public List<IMenuItem> getMenuItemsByCategory(MenuCategory category){
         return repo.getMenuItemsByCategory(category);
     }
 
-    public MenuItem getMenuItemById(Long id){
+    public IMenuItem getMenuItemById(Long id){
         return repo.getMenuItemById(id);
     }
 }

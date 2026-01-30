@@ -1,15 +1,13 @@
 package org.example.fooddelivery.domain.repo;
 
-import org.example.fooddelivery.domain.model.Order;
-import org.example.fooddelivery.domain.model.OrderStatus;
-import org.example.fooddelivery.domain.model.User;
+import org.example.fooddelivery.domain.model.*;
 
 import java.util.List;
 
 public interface OrderRepo {
-    Order saveOrder(Order order);
-    Order updateOrder(Order order);
-    Order updateOrderStatus(Long orderId, OrderStatus status);
-    List<Order> getOrdersByUser(User user);
-    List<Order> getOrdersByStatus(OrderStatus status);
+    IOrder saveOrder(IOrder order);
+    IOrder updateOrder(IOrder order);
+    IOrder updateOrderStatus(Long orderId, OrderStatus status);
+    List<IOrder> getOrdersByUser(IUser user);
+    List<IOrder> getOrdersByStatus(OrderStatus status);
 }

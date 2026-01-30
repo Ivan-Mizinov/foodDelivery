@@ -2,8 +2,8 @@ package org.example.fooddelivery.presentation.service;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.fooddelivery.domain.model.IMenuItem;
 import org.example.fooddelivery.domain.model.IUser;
-import org.example.fooddelivery.domain.model.MenuItem;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
@@ -19,7 +19,7 @@ public class SessionInfoService {
     private String phone;
     private String address;
     private String email;
-    private List<MenuItem> cart;
+    private List<IMenuItem> cart;
 
     public void setUserInfo(IUser user) {
         setUsername(user.getName());
@@ -29,7 +29,7 @@ public class SessionInfoService {
     }
 
     public BigDecimal getTotalPrice() {
-        return cart.stream().map(MenuItem::getPrice)
+        return cart.stream().map(IMenuItem::getPrice)
                    .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

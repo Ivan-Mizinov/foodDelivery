@@ -55,7 +55,7 @@ public class OrderAndDeliveryController {
             return "redirect:/menu";
         }
 
-        List<MenuItem> selectedMenuItems = new ArrayList<>();
+        List<IMenuItem> selectedMenuItems = new ArrayList<>();
         for (int i = 0; i < selectedItemsIds.size(); i++) {
             for (int j = 0; j < quantities.get(i); j++) {
                 selectedMenuItems.add(menuItemService.getMenuItemById(selectedItemsIds.get(i)));
@@ -74,7 +74,7 @@ public class OrderAndDeliveryController {
         user.setPhone(sessionInfoService.getPhone());
         user.setName(sessionInfoService.getUsername());
 
-        Order order = Order.builder()
+        IOrder order = Order.builder()
                 .user(user)
                 .status(OrderStatus.NEW)
                 .itemList(sessionInfoService.getCart())
@@ -82,7 +82,7 @@ public class OrderAndDeliveryController {
                 .orderDate(LocalDateTime.now())
                 .build();
 
-        Delivery delivery = Delivery.builder()
+        IDelivery delivery = Delivery.builder()
                 .order(order)
                 .deliveryTime(LocalDateTime.now())
                 .phone(sessionInfoService.getPhone())
