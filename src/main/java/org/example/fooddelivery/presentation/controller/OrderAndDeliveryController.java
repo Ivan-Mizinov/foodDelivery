@@ -1,32 +1,26 @@
 package org.example.fooddelivery.presentation.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.fooddelivery.domain.model.*;
 import org.example.fooddelivery.presentation.service.*;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.example.fooddelivery.presentation.service.dto.OrderDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class OrderAndDeliveryController {
     private final OrderService orderService;
     private final DeliveryService deliveryService;
-    private final MenuItemService menuItemService;
     private final UserService userService;
     private final SessionInfoService sessionInfoService;
-    private final MessageSource messageSource;
 
     @GetMapping("/order")
     public String showOrder(Model model) {
@@ -34,41 +28,27 @@ public class OrderAndDeliveryController {
                 sessionInfoService.getCart().isEmpty()) {
             return "redirect:/menu";
         }
-        model.addAttribute("sessionInfoService", sessionInfoService);
-        return "order";
-    }
-
-    @PostMapping("/order")
-    public String processOrderForm(
-            @RequestParam(value = "selectedItemsIds", required = false) List<Long> selectedItemsIds,
-            @RequestParam(value = "quantities", required = false) List<Integer> quantities,
-            Model model,
-            RedirectAttributes redirectAttributes
-    ) {
-        if (selectedItemsIds == null || selectedItemsIds.isEmpty()) {
-            String errorMessage = messageSource.getMessage(
-                    "error.please_select_at_least_one_item",
-                    null,
-                    LocaleContextHolder.getLocale()
-            );
-            redirectAttributes.addFlashAttribute("error", errorMessage);
-            return "redirect:/menu";
-        }
-
-        List<IMenuItem> selectedMenuItems = new ArrayList<>();
-        for (int i = 0; i < selectedItemsIds.size(); i++) {
-            for (int j = 0; j < quantities.get(i); j++) {
-                selectedMenuItems.add(menuItemService.getMenuItemById(selectedItemsIds.get(i)));
-            }
-        }
-        sessionInfoService.setCart(selectedMenuItems);
-
+        model.addAttribute("orderDto", new OrderDto(
+                sessionInfoService.getUsername(),
+                sessionInfoService.getAddress(),
+                sessionInfoService.getPhone()));
         model.addAttribute("sessionInfoService", sessionInfoService);
         return "order";
     }
 
     @PostMapping("/order/submit")
-    public String orderSubmit() {
+    public String orderSubmit(
+            @Valid @ModelAttribute("orderDto") OrderDto orderDto,
+            BindingResult result,
+            Model model
+    ) {
+        if (result.hasErrors()) {
+            model.addAttribute("sessionInfoService", sessionInfoService);
+            model.addAttribute("orderDto", orderDto);
+            return "order";
+        }
+        sessionInfoService.setInfoFromOrderDto(orderDto);
+
         IUser user = userService.getUserByEmail(sessionInfoService.getEmail());
         user.setAddress(sessionInfoService.getAddress());
         user.setPhone(sessionInfoService.getPhone());
@@ -91,10 +71,6 @@ public class OrderAndDeliveryController {
 
         orderService.createOrder(delivery.getOrder());
         deliveryService.createDelivery(delivery);
-
-        log.info(delivery.toString());
-        log.info(order.toString());
-        log.info(user.toString());
 
         return "redirect:/menu";
     }

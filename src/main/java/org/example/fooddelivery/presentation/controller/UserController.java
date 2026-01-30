@@ -6,6 +6,7 @@ import org.example.fooddelivery.conf.AuthUtils;
 import org.example.fooddelivery.domain.model.IUser;
 import org.example.fooddelivery.presentation.service.SessionInfoService;
 import org.example.fooddelivery.presentation.service.UserService;
+import org.example.fooddelivery.presentation.service.dto.LoginCredential;
 import org.example.fooddelivery.presentation.service.dto.UserDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    private final UserService service;
+    private final UserService userService;
     private final AuthUtils authUtils;
     private final SessionInfoService sessionInfoService;
 
@@ -24,26 +25,26 @@ public class UserController {
     public String newUser(
             Model model
     ) {
-        model.addAttribute("user", new UserDto());
+        model.addAttribute("userDto", new UserDto());
         return "register";
     }
 
     @PostMapping("/register")
     public String registerUser(
-            @Valid @ModelAttribute("user") UserDto user,
+            @Valid @ModelAttribute("userDto") UserDto userDto,
             BindingResult result,
             Model model
     ) {
         if (result.hasErrors()) {
-            model.addAttribute("user", user);
+            model.addAttribute("sessionInfoService", sessionInfoService);
             return "register";
         }
 
-        String encodedPassword = authUtils.encodePassword(user.getPassword());
-        user.setPassword(encodedPassword);
-        service.createUser(user);
+        String encodedPassword = authUtils.encodePassword(userDto.getPassword());
+        userDto.setPassword(encodedPassword);
+        userService.createUser(userDto);
+        sessionInfoService.setUserInfo(userDto);
 
-        sessionInfoService.setUserInfo(user);
         model.addAttribute("msg", "User registered successfully");
         return "redirect:/users/login";
     }
@@ -52,21 +53,23 @@ public class UserController {
     public String showLoginForm(
             Model model
     ) {
-        model.addAttribute("email", "");
-        model.addAttribute("password", "");
+        model.addAttribute("credential", new LoginCredential());
         return "login";
     }
 
     @PostMapping("/login")
     public String loginUser(
-            @RequestParam String email,
-            @RequestParam String password,
+            @Valid @ModelAttribute(name = "credential") LoginCredential credential,
+            BindingResult result,
             Model model
     ) {
         try {
-            IUser user = service.getUserByEmail(email);
-            if (authUtils.authenticate(password, user.getPassword())) {
-                sessionInfoService.setUserInfo(user);
+            if (result.hasErrors()) {
+                model.addAttribute("credential",  credential);
+                return "login";
+            }
+            IUser user = userService.getUserByEmail(credential.getEmail());
+            if (authUtils.authenticate(credential.getPassword(), user.getPassword())) {
                 return "redirect:/menu";
             }
             model.addAttribute("error", "Invalid email or password");
@@ -81,8 +84,8 @@ public class UserController {
     public String deleteUser(
             @RequestParam String email
     ) {
-        IUser user = service.getUserByEmail(email);
-        service.deleteUser(user);
+        IUser user = userService.getUserByEmail(email);
+        userService.deleteUser(user);
         return "redirect:/users/register";
     }
 }
