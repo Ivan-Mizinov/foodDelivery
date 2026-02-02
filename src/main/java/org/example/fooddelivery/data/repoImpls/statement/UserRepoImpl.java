@@ -7,24 +7,31 @@ import org.example.fooddelivery.domain.repo.UserRepo;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 @RequiredArgsConstructor
-@Repository("URwS")
+@Repository("URwPS")
 public class UserRepoImpl implements UserRepo {
 
     private final DataSource dataSource;
 
     @Override
     public IUser saveUser(IUser user) {
-        try (Statement statement = dataSource.getConnection().createStatement()) {
-            String sql = "INSERT INTO users(name, email, password, telegram, phone, address) VALUES(" +
-                    "'" + user.getName() + "', '" + user.getEmail() + "', '" + user.getPassword() + "', '" +
-                    user.getTelegram() + "', '" + user.getPhone() + "', '" + user.getAddress() + "'" +
-                    ");";
-            statement.executeQuery(sql);
+        if (user == null) throw new IllegalArgumentException("user cannot be null");
+
+        String sql = "INSERT INTO users(name, email, password, telegram, phone, address) VALUES(?,?,?,?,?,?);";
+        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql)) {
+            ps.setString(1, user.getName());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPassword());
+            ps.setString(4, user.getTelegram());
+            ps.setString(5, user.getPhone());
+            ps.setString(6, user.getAddress());
+
+            int affectedRow = ps.executeUpdate();
+            if (affectedRow == 0) throw new SQLException("Failed to save user");
             return user;
         } catch (SQLException e) {
             return null;
@@ -33,51 +40,60 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public IUser updateUser(IUser user) {
-        try (Statement statement = dataSource.getConnection().createStatement()) {
-            String sql = "UPDATE users SET name='" + user.getName() + "', '" +
-                    "email='" + user.getEmail() + "', '" +
-                    "password='" + user.getPassword() + "', '" +
-                    "telegram='" + user.getTelegram() + "', '" +
-                    "phone='" + user.getPhone() + "', '" +
-                    "address='" + user.getAddress() + "'" +
-                    "WHERE id=" + user.getId() + ";";
-            statement.executeUpdate(sql);
+        String sql = "UPDATE users SET name=?, email=?, password=?, telegram=?, phone=?, address=? WHERE id=?";
+        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql)) {
+            ps.setString(1, user.getName());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPassword());
+            ps.setString(4, user.getTelegram());
+            ps.setString(5, user.getPhone());
+            ps.setString(6, user.getAddress());
+            ps.setLong(7, user.getId());
+            int affectedRow = ps.executeUpdate();
+            if (affectedRow == 0) throw new SQLException("Failed to update user");
             return user;
         } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
 
     @Override
     public IUser getUserByEmail(String email) {
-        try (Statement statement = dataSource.getConnection().createStatement()) {
-            String sql = "SELECT * FROM users WHERE email = '" + email + "';";
-            ResultSet rs = statement.executeQuery(sql);
-            User user = new User();
-            while (rs.next()) {
-                user = User.builder()
-                        .id(rs.getLong("id"))
-                        .name(rs.getString("name"))
-                        .email(rs.getString("email"))
-                        .password(rs.getString("password"))
-                        .telegram(rs.getString("telegram"))
-                        .phone(rs.getString("phone"))
-                        .address(rs.getString("address"))
-                        .build();
+        String sql = "SELECT * FROM users WHERE email = ?";
+        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return User.builder()
+                            .id(rs.getLong("id"))
+                            .name(rs.getString("name"))
+                            .email(rs.getString("email"))
+                            .password(rs.getString("password"))
+                            .telegram(rs.getString("telegram"))
+                            .phone(rs.getString("phone"))
+                            .address(rs.getString("address"))
+                            .build();
+                }
             }
-            return user;
         } catch (SQLException e) {
-            return null;
+            throw new RuntimeException("Failed to get user by email", e);
         }
+        return null;
     }
 
     @Override
     public void deleteUser(IUser user) {
-        try (Statement statement = dataSource.getConnection().createStatement()) {
-            String sql = "DELETE FROM users WHERE id=" + user.getId();
-            statement.executeUpdate(sql);
+        if (user == null) throw new IllegalArgumentException("user cannot be null");
+
+        String sql = "DELETE FROM users WHERE id=?";
+        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql)) {
+            ps.setLong(1, user.getId());
+            int affectedRow = ps.executeUpdate();
+            if (affectedRow == 0) throw new SQLException("Failed to delete user");
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to delete user", e);
         }
     }
+
 }
