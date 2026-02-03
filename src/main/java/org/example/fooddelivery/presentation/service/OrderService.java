@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OrderService extends OrderInterractor {
-    public OrderService(@Qualifier("ORwPS") OrderRepo repo) {
+    public OrderService(@Qualifier("ORwJT") OrderRepo repo) {
         super(repo);
     }
 }

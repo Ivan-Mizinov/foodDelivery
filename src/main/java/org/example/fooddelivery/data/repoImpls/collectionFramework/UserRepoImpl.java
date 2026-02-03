@@ -31,11 +31,19 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
+    public IUser getUserById(Long id) {
+        return users.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
     public IUser getUserByEmail(String email) {
         return users.stream()
-                    .filter(user -> user.getEmail().equals(email))
-                    .findFirst()
-                    .orElse(null);
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

@@ -7,4 +7,5 @@ public interface UserRepo {
     IUser updateUser(IUser user);
     IUser getUserByEmail(String email);
     void deleteUser(IUser user);
+    IUser getUserById(Long id);
 }

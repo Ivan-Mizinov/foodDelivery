@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService extends UserInterractor {
 
-    public UserService(@Qualifier("URwPS") UserRepo userRepo) {
+    public UserService(@Qualifier("URwJT") UserRepo userRepo) {
         super(userRepo);
     }
 }

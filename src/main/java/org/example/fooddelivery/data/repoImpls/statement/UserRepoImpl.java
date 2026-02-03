@@ -102,4 +102,28 @@ public class UserRepoImpl implements UserRepo {
         }
     }
 
+    @Override
+    public IUser getUserById(Long id) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return User.builder()
+                            .id(rs.getLong("id"))
+                            .name(rs.getString("name"))
+                            .email(rs.getString("email"))
+                            .password(rs.getString("password"))
+                            .telegram(rs.getString("telegram"))
+                            .phone(rs.getString("phone"))
+                            .address(rs.getString("address"))
+                            .build();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get user by email", e);
+        }
+        return null;
+    }
+
 }
