@@ -28,30 +28,45 @@ public class OrderRepoImpl implements OrderRepo {
 
         String sqlOrder = "INSERT INTO orders(order_date, status, user_id, total_price) VALUES (?, ?, ?, ?)";
         String sqlOrderMenuItems = "INSERT INTO orders_menu_items(order_id, menu_item_id) VALUES (?, ?)";
-        try (PreparedStatement psIntoOrders = dataSource.getConnection().prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement psIntoOrdersMenuItems = dataSource.getConnection().prepareStatement(sqlOrderMenuItems)
-        ) {
-            psIntoOrders.setTimestamp(1, Timestamp.valueOf(order.getOrderDate()));
-            psIntoOrders.setString(2, order.getStatus().name());
-            psIntoOrders.setLong(3, order.getUser().getId());
-            psIntoOrders.setBigDecimal(4, order.getTotalPrice());
 
-            int affectedRow = psIntoOrders.executeUpdate();
-            if (affectedRow == 0) throw new SQLException("Failed to save Order");
+        try (Connection conn = dataSource.getConnection()) {
 
-            try (ResultSet generatedKeys = psIntoOrders.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    order.setId(generatedKeys.getLong(1));
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psIntoOrders = conn.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS);
+                 PreparedStatement psIntoOrdersMenuItems = conn.prepareStatement(sqlOrderMenuItems)
+            ) {
+                psIntoOrders.setTimestamp(1, Timestamp.valueOf(order.getOrderDate()));
+                psIntoOrders.setString(2, order.getStatus().name());
+                psIntoOrders.setLong(3, order.getUser().getId());
+                psIntoOrders.setBigDecimal(4, order.getTotalPrice());
+
+                int affectedRow = psIntoOrders.executeUpdate();
+                if (affectedRow == 0) throw new SQLException("Failed to save Order");
+
+                try (ResultSet generatedKeys = psIntoOrders.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        order.setId(generatedKeys.getLong(1));
+                    }
                 }
-            }
 
-            for (IMenuItem item : order.getItemList()) {
-                psIntoOrdersMenuItems.setLong(1, order.getId());
-                psIntoOrdersMenuItems.setLong(2, item.getId());
-                psIntoOrdersMenuItems.executeUpdate();
-            }
+                for (IMenuItem item : order.getItemList()) {
+                    psIntoOrdersMenuItems.setLong(1, order.getId());
+                    psIntoOrdersMenuItems.setLong(2, item.getId());
+                    psIntoOrdersMenuItems.addBatch();
+                }
+                int[] batchResult = psIntoOrdersMenuItems.executeBatch();
+                for (int result : batchResult) {
+                    if (result == Statement.EXECUTE_FAILED)
+                        throw new SQLException("Failed to execute batch insert statement");
+                }
 
-            return order;
+                conn.commit();
+                return order;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new RuntimeException(e);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
