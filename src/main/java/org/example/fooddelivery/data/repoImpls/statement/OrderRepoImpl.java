@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,14 +28,22 @@ public class OrderRepoImpl implements OrderRepo {
 
         String sqlOrder = "INSERT INTO orders(order_date, status, user_id, total_price) VALUES (?, ?, ?, ?)";
         String sqlOrderMenuItems = "INSERT INTO orders_menu_items(order_id, menu_item_id) VALUES (?, ?)";
-        try (PreparedStatement psIntoOrders = dataSource.getConnection().prepareStatement(sqlOrder);
+        try (PreparedStatement psIntoOrders = dataSource.getConnection().prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS);
              PreparedStatement psIntoOrdersMenuItems = dataSource.getConnection().prepareStatement(sqlOrderMenuItems)
         ) {
             psIntoOrders.setTimestamp(1, Timestamp.valueOf(order.getOrderDate()));
             psIntoOrders.setString(2, order.getStatus().name());
             psIntoOrders.setLong(3, order.getUser().getId());
             psIntoOrders.setBigDecimal(4, order.getTotalPrice());
-            psIntoOrders.executeUpdate();
+
+            int affectedRow = psIntoOrders.executeUpdate();
+            if (affectedRow == 0) throw new SQLException("Failed to save Order");
+
+            try (ResultSet generatedKeys = psIntoOrders.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    order.setId(generatedKeys.getLong(1));
+                }
+            }
 
             for (IMenuItem item : order.getItemList()) {
                 psIntoOrdersMenuItems.setLong(1, order.getId());
@@ -63,6 +68,7 @@ public class OrderRepoImpl implements OrderRepo {
             ps.setLong(3, order.getUser().getId());
             ps.setBigDecimal(4, order.getTotalPrice());
             ps.setLong(5, order.getId());
+
             int affectedRow = ps.executeUpdate();
             if (affectedRow == 0) throw new SQLException("Failed to update Order");
             return order;

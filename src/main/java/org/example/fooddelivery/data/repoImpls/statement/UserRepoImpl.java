@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 @RequiredArgsConstructor
 @Repository("URwPS")
@@ -22,7 +23,7 @@ public class UserRepoImpl implements UserRepo {
         if (user == null) throw new IllegalArgumentException("user cannot be null");
 
         String sql = "INSERT INTO users(name, email, password, telegram, phone, address) VALUES(?,?,?,?,?,?);";
-        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, user.getName());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPassword());
@@ -32,6 +33,12 @@ public class UserRepoImpl implements UserRepo {
 
             int affectedRow = ps.executeUpdate();
             if (affectedRow == 0) throw new SQLException("Failed to save user");
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    user.setId(generatedKeys.getLong(1));
+                }
+            }
             return user;
         } catch (SQLException e) {
             return null;
@@ -53,8 +60,7 @@ public class UserRepoImpl implements UserRepo {
             if (affectedRow == 0) throw new SQLException("Failed to update user");
             return user;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 

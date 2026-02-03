@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,13 +25,23 @@ public class MenuItemRepoImpl implements MenuItemRepo {
     public IMenuItem saveMenuItem(IMenuItem menuItem) {
         if (menuItem == null) throw new IllegalArgumentException("menuItem cannot be null");
 
-        String sql = "INSERT INTO menu_items (name, menu_category, price) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql)) {
-            ps.setString(1, menuItem.getName());
-            ps.setString(2, menuItem.getCategory().name());
-            ps.setBigDecimal(3, menuItem.getPrice());
+        String sql = "INSERT INTO menu_items (id, name, menu_category, price) VALUES (?, ?, ?, ?) " +
+                "ON CONFLICT (id) DO " +
+                "UPDATE SET name = excluded.name, menu_category = excluded.menu_category ,price = excluded.price";
+        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setLong(1, menuItem.getId());
+            ps.setString(2, menuItem.getName());
+            ps.setString(3, menuItem.getCategory().name());
+            ps.setBigDecimal(4, menuItem.getPrice());
+
             int affectedRow = ps.executeUpdate();
             if (affectedRow == 0) throw new SQLException("Failed to save MenuItem");
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    menuItem.setId(generatedKeys.getLong(1));
+                }
+            }
             return menuItem;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -112,6 +123,5 @@ public class MenuItemRepoImpl implements MenuItemRepo {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 }

@@ -70,6 +70,7 @@ public class UserController {
             }
             IUser user = userService.getUserByEmail(credential.getEmail());
             if (authUtils.authenticate(credential.getPassword(), user.getPassword())) {
+                sessionInfoService.setUserInfo(user);
                 return "redirect:/menu";
             }
             model.addAttribute("error", "Invalid email or password");

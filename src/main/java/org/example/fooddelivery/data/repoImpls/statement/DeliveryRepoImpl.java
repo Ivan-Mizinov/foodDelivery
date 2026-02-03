@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 
 @Repository("DRwPS")
 public class DeliveryRepoImpl implements DeliveryRepo {
@@ -28,13 +25,20 @@ public class DeliveryRepoImpl implements DeliveryRepo {
         if (delivery == null) throw new IllegalArgumentException("delivery cannot be null");
 
         String sql = "INSERT INTO deliveries(address, phone, delivery_time, order_id) VALUES (?,?,?,?)";
-        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, delivery.getAddress());
             ps.setString(2, delivery.getPhone());
             ps.setTimestamp(3, Timestamp.valueOf(delivery.getDeliveryTime()));
             ps.setLong(4, delivery.getOrder().getId());
+
             int affectedRow = ps.executeUpdate();
             if (affectedRow == 0) throw new SQLException("Failed to save Delivery");
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    delivery.setId(rs.getLong(1));
+                }
+            }
             return delivery;
         } catch (SQLException e) {
             throw new RuntimeException(e);
