@@ -5,6 +5,7 @@ import org.example.fooddelivery.domain.model.IMenuItem;
 import org.example.fooddelivery.domain.model.MenuCategory;
 import org.example.fooddelivery.domain.model.MenuItem;
 import org.example.fooddelivery.domain.repo.MenuItemRepo;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -59,12 +60,8 @@ public class MenuItemRepoImpl implements MenuItemRepo {
 
         String sql = "SELECT * FROM menu_items WHERE id = ?";
 
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> MenuItem.builder()
-                .id(rs.getLong("id"))
-                .name(rs.getString("name"))
-                .category(MenuCategory.valueOf(rs.getString("menu_category")))
-                .price(rs.getBigDecimal("price"))
-                .build(),
+        return jdbcTemplate.queryForObject(sql,
+                new BeanPropertyRowMapper<>(MenuItem.class),
                 id
         );
     }
@@ -72,14 +69,10 @@ public class MenuItemRepoImpl implements MenuItemRepo {
     @Override
     public List<IMenuItem> getMenuItemsByCategory(MenuCategory category) {
         String sql = "SELECT * FROM menu_items WHERE menu_category = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> MenuItem.builder()
-                .id(rs.getLong("id"))
-                .name(rs.getString("name"))
-                .category(MenuCategory.valueOf(rs.getString("menu_category")))
-                .price(rs.getBigDecimal("price"))
-                .build(),
-                category.name()
-        );
+        return jdbcTemplate.queryForStream(sql,
+                        new BeanPropertyRowMapper<>(MenuItem.class),
+                        category.name())
+                .map(item -> (IMenuItem) item).toList();
     }
 
     @Override
