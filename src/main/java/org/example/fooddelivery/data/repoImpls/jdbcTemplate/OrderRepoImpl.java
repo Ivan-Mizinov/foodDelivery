@@ -3,7 +3,6 @@ package org.example.fooddelivery.data.repoImpls.jdbcTemplate;
 import org.example.fooddelivery.domain.model.*;
 import org.example.fooddelivery.domain.repo.MenuItemRepo;
 import org.example.fooddelivery.domain.repo.OrderRepo;
-import org.example.fooddelivery.domain.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,14 +17,12 @@ public class OrderRepoImpl implements OrderRepo {
 
     private final JdbcTemplate jdbcTemplate;
     private final MenuItemRepo menuItemRepo;
-    private final UserRepo userRepo;
 
     public OrderRepoImpl(JdbcTemplate jdbcTemplate,
-                         @Qualifier("MRwJT") MenuItemRepo menuItemRepo,
-                         @Qualifier("URwJT") UserRepo userRepo) {
+                         @Qualifier("MRwJT") MenuItemRepo menuItemRepo
+    ) {
         this.jdbcTemplate = jdbcTemplate;
         this.menuItemRepo = menuItemRepo;
-        this.userRepo = userRepo;
     }
 
     @Override
@@ -86,10 +83,22 @@ public class OrderRepoImpl implements OrderRepo {
     @Override
     public List<IOrder> getOrdersByUser(IUser user) {
         if (user == null) throw new IllegalArgumentException("user cannot be null");
-
-        String sql = "SELECT * FROM orders WHERE user_id = ?";
+        String sql = """
+                    SELECT
+                        o.id AS order_id, o.order_date, o.status, o.total_price,
+                        u.id AS user_id, u.name AS user_name, u.email, u.password, u.telegram, u.phone, u.address
+                    FROM orders o
+                    JOIN users u ON o.user_id = u.id
+                    JOIN orders_menu_items omi ON o.id = omi.order_id
+                    WHERE o.user_id = ?
+                    ORDER BY o.id
+                """;
         return jdbcTemplate.query(sql,
-                (rs, numRow) -> getOrderById(rs.getLong("id")),
+                (rs, numRow) -> {
+                    IOrder order = createOrderFromRs(rs);
+                    order.setUser(createUserFromRS(rs));
+                    return order;
+                },
                 user.getId());
     }
 
@@ -132,18 +141,33 @@ public class OrderRepoImpl implements OrderRepo {
     protected IOrder getOrderById(Long orderId) {
         if (orderId == null) throw new IllegalArgumentException("orderId cannot be null");
 
-        String sql = "SELECT * FROM orders WHERE id = ?";
+        String sql = """
+                    SELECT
+                        o.id AS order_id, o.order_date, o.status, o.total_price,
+                        u.id AS user_id, u.name AS user_name, u.email, u.password, u.telegram, u.phone, u.address,
+                        mi.id AS menu_item_id, mi.name AS menu_item_name, mi.menu_category, mi.price AS menu_item_price
+                    FROM orders o
+                    JOIN users u ON o.user_id = u.id
+                    JOIN orders_menu_items omi ON o.id = omi.order_id
+                    JOIN menu_items mi ON omi.menu_item_id = mi.id
+                    WHERE o.id = ?
+                    ORDER BY o.id
+                """;
 
-        return jdbcTemplate.queryForObject(sql, (rs, numRow) -> {
-            IOrder order = new Order();
-            order.setId(rs.getLong("id"));
-            order.setOrderDate(rs.getTimestamp("order_date").toLocalDateTime());
-            order.setStatus(OrderStatus.valueOf(rs.getString("status")));
-            order.setUser(userRepo.getUserById(rs.getLong("user_id")));
-            order.setTotalPrice(rs.getBigDecimal("total_price"));
-            order.setItemList(getMenuItemsForOrder(order.getId()));
-            return order;
-        }, orderId);
+        return jdbcTemplate.query(sql,
+                (rs) -> {
+                    IOrder order = null;
+                    while (rs.next()) {
+                        if (order == null) {
+                            order = createOrderFromRs(rs);
+                            order.setUser(createUserFromRS(rs));
+                            order.setItemList(new ArrayList<>());
+                        }
+                        order.getItemList().add(createMenuItemFromRS(rs));
+                    }
+                    return order;
+                },
+                orderId);
     }
 
     private List<IMenuItem> getMenuItemsForOrder(Long orderId) {
