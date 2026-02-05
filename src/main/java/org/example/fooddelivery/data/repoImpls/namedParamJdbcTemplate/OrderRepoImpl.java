@@ -1,49 +1,55 @@
-package org.example.fooddelivery.data.repoImpls.jdbcTemplate;
+package org.example.fooddelivery.data.repoImpls.namedParamJdbcTemplate;
 
 import lombok.RequiredArgsConstructor;
 import org.example.fooddelivery.domain.model.*;
 import org.example.fooddelivery.domain.repo.OrderRepo;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.*;
 
 @RequiredArgsConstructor
-@Repository("ORwJT")
+@Repository("ORwNJT")
 public class OrderRepoImpl implements OrderRepo {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate template;
 
     @Override
     public IOrder saveOrder(IOrder order) {
         if (order == null) throw new IllegalArgumentException("order cannot be null");
 
-        String sqlOrder = "INSERT INTO orders(order_date, status, user_id, total_price) VALUES (?, ?, ?, ?)";
-        String sqlOrderMenuItems = "INSERT INTO orders_menu_items(order_id, menu_item_id) VALUES (?, ?)";
+        String sqlOrder = "INSERT INTO orders(order_date, status, user_id, total_price) " +
+                "VALUES (:order_date, :status, :user_id, :total_price)";
 
+        SqlParameterSource paramsOrder = new MapSqlParameterSource()
+                .addValue("order_date", Timestamp.valueOf(order.getOrderDate()))
+                .addValue("status", order.getStatus().name())
+                .addValue("user_id", order.getUser().getId())
+                .addValue("total_price", order.getTotalPrice());
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        int affectedRow = jdbcTemplate.update(
-                con -> {
-                    PreparedStatement ps = con.prepareStatement(sqlOrder, new String[]{"id"});
-                    ps.setTimestamp(1, Timestamp.valueOf(order.getOrderDate()));
-                    ps.setString(2, order.getStatus().name());
-                    ps.setLong(3, order.getUser().getId());
-                    ps.setBigDecimal(4, order.getTotalPrice());
-                    return ps;
-                }, keyHolder);
-
+        int affectedRow = template.update(
+                sqlOrder, paramsOrder, keyHolder, new String[]{"id"});
         if (affectedRow == 0) throw new RuntimeException("Failed to save order");
-
         order.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
 
-        List<Object[]> batchArgs = new ArrayList<>();
+        String sqlOrderMenuItems = "INSERT INTO orders_menu_items(order_id, menu_item_id) " +
+                "VALUES (:order_id, :menu_item_id)";
+
+        SqlParameterSource[] batchArgs = new SqlParameterSource[order.getItemList().size()];
+        int index = 0;
         for (IMenuItem item : order.getItemList()) {
-            batchArgs.add(new Object[]{order.getId(), item.getId()});
+            batchArgs[index++] = new MapSqlParameterSource()
+                    .addValue("order_id", order.getId())
+                    .addValue("menu_item_id", item.getId());
         }
-        jdbcTemplate.batchUpdate(sqlOrderMenuItems, batchArgs);
+        template.batchUpdate(sqlOrderMenuItems, batchArgs);
         return order;
     }
 
@@ -51,14 +57,15 @@ public class OrderRepoImpl implements OrderRepo {
     public IOrder updateOrder(IOrder order) {
         if (order == null) throw new IllegalArgumentException("order cannot be null");
 
-        String sql = "UPDATE orders SET order_date=?, status = ?, user_id = ?, total_price = ? WHERE id = ?";
+        String sql = "UPDATE orders SET order_date = :order_date, status = :status, " +
+                "user_id = :user_id, total_price = :total_price WHERE id = :id";
 
-        int affectedRow = jdbcTemplate.update(sql,
-                Timestamp.valueOf(order.getOrderDate()),
-                order.getStatus().name(),
-                order.getUser().getId(),
-                order.getTotalPrice(),
-                order.getId());
+        int affectedRow = template.update(sql, new MapSqlParameterSource()
+                .addValue("order_date", Timestamp.valueOf(order.getOrderDate()))
+                .addValue("status", order.getStatus().name())
+                .addValue("user_id", order.getUser().getId())
+                .addValue("total_price", order.getTotalPrice())
+                .addValue("id", order.getId()));
 
         if (affectedRow == 0) throw new RuntimeException("Failed to update Order");
         return order;
@@ -66,8 +73,10 @@ public class OrderRepoImpl implements OrderRepo {
 
     @Override
     public IOrder updateOrderStatus(Long orderId, OrderStatus status) {
-        String sql = "UPDATE orders SET status = ? WHERE id = ?";
-        int affectedRow = jdbcTemplate.update(sql, status.name(), orderId);
+        String sql = "UPDATE orders SET status = :status WHERE id = :id";
+        int affectedRow = template.update(sql, new MapSqlParameterSource()
+                .addValue("status", status.name())
+                .addValue("id", orderId));
         if (affectedRow == 0) throw new RuntimeException("Failed to update OrderStatus");
         return getOrderById(orderId);
     }
@@ -82,16 +91,16 @@ public class OrderRepoImpl implements OrderRepo {
                     FROM orders o
                     JOIN users u ON o.user_id = u.id
                     JOIN orders_menu_items omi ON o.id = omi.order_id
-                    WHERE o.user_id = ?
+                    WHERE o.user_id = :user_id
                     ORDER BY o.id
                 """;
-        return jdbcTemplate.query(sql,
-                (rs, numRow) -> {
+        return template.query(sql,
+                new MapSqlParameterSource("user_id", user.getId()),
+                (rs, rowNum) -> {
                     IOrder order = createOrderFromRs(rs);
                     order.setUser(createUserFromRS(rs));
                     return order;
-                },
-                user.getId());
+                });
     }
 
     @Override
@@ -105,12 +114,14 @@ public class OrderRepoImpl implements OrderRepo {
                     JOIN users u ON o.user_id = u.id
                     JOIN orders_menu_items omi ON o.id = omi.order_id
                     JOIN menu_items mi ON omi.menu_item_id = mi.id
-                    WHERE o.status = ?
+                    WHERE o.status = :order_status
                     ORDER BY o.id
                 """;
-        return jdbcTemplate.query(sql,
+        return template.query(
+                sql,
+                new MapSqlParameterSource("order_status",status.name()),
                 (rs) -> {
-                    HashMap<Long, IOrder> orderMap = new LinkedHashMap<>();
+                    Map<Long, IOrder> orderMap = new LinkedHashMap<>();
                     while (rs.next()) {
                         Long orderId = rs.getLong("order_id");
                         IOrder order = orderMap.computeIfAbsent(orderId, id -> {
@@ -126,8 +137,7 @@ public class OrderRepoImpl implements OrderRepo {
                         order.getItemList().add(createMenuItemFromRS(rs));
                     }
                     return new ArrayList<>(orderMap.values());
-                },
-                status.name());
+                });
     }
 
     protected IOrder getOrderById(Long orderId) {
@@ -142,11 +152,12 @@ public class OrderRepoImpl implements OrderRepo {
                     JOIN users u ON o.user_id = u.id
                     JOIN orders_menu_items omi ON o.id = omi.order_id
                     JOIN menu_items mi ON omi.menu_item_id = mi.id
-                    WHERE o.id = ?
+                    WHERE o.id = :order_id
                     ORDER BY o.id
                 """;
 
-        return jdbcTemplate.query(sql,
+        return template.query(sql,
+                new MapSqlParameterSource("order_id", orderId),
                 (rs) -> {
                     IOrder order = null;
                     while (rs.next()) {
@@ -158,8 +169,7 @@ public class OrderRepoImpl implements OrderRepo {
                         order.getItemList().add(createMenuItemFromRS(rs));
                     }
                     return order;
-                },
-                orderId);
+                });
     }
 
     private IOrder createOrderFromRs(ResultSet rs) throws SQLException {
