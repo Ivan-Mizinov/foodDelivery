@@ -110,14 +110,51 @@ public class OrderRepoImpl implements OrderRepo {
     public List<IOrder> getOrdersByUser(IUser user) {
         if (user == null) throw new IllegalArgumentException("user cannot be null");
 
-        String sql = "SELECT * FROM orders WHERE user_id = ?";
+        String sql = """
+                    SELECT
+                        o.id AS order_id, o.order_date, o.status, o.total_price,
+                        u.id AS user_id, u.name AS user_name, u.email, u.password, u.telegram, u.phone, u.address,
+                        mi.id AS menu_item_id, mi.name AS menu_item_name, mi.menu_category, mi.price AS menu_item_price
+                    FROM orders o
+                    JOIN users u ON o.user_id = u.id
+                    JOIN orders_menu_items omi ON o.id = omi.order_id
+                    JOIN menu_items mi ON omi.menu_item_id = mi.id
+                    WHERE o.user_id = ?
+                    ORDER BY o.id
+                """;
         List<IOrder> orders = new ArrayList<>();
         try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql)) {
             ps.setLong(1, user.getId());
             try (ResultSet rs = ps.executeQuery()) {
+                IOrder order = null;
                 while (rs.next()) {
-                    Long orderId = rs.getLong("id");
-                    IOrder order = getOrderById(orderId);
+                    if (order == null) {
+                        order = Order.builder()
+                                .id(rs.getLong("order_id"))
+                                .orderDate(rs.getTimestamp("order_date").toLocalDateTime())
+                                .status(OrderStatus.valueOf(rs.getString("status")))
+                                .totalPrice(rs.getBigDecimal("total_price"))
+                                .build();
+
+                        IUser newUser = User.builder()
+                                .id(rs.getLong("user_id"))
+                                .name(rs.getString("name"))
+                                .email(rs.getString("email"))
+                                .password(rs.getString("password"))
+                                .phone(rs.getString("phone"))
+                                .telegram(rs.getString("telegram"))
+                                .address(rs.getString("address"))
+                                .build();
+                        order.setUser(newUser);
+                        order.setItemList(new ArrayList<>());
+                    }
+                    IMenuItem menuItem = MenuItem.builder()
+                            .id(rs.getLong("menu_item_id"))
+                            .name(rs.getString("menu_item_name"))
+                            .category(MenuCategory.valueOf(rs.getString("menu_item_category")))
+                            .price(rs.getBigDecimal("menu_item_price"))
+                            .build();
+                    order.getItemList().add(menuItem);
                     orders.add(order);
                 }
             }

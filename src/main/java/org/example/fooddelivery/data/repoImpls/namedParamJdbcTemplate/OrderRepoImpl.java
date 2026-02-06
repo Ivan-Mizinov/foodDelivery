@@ -3,6 +3,7 @@ package org.example.fooddelivery.data.repoImpls.namedParamJdbcTemplate;
 import lombok.RequiredArgsConstructor;
 import org.example.fooddelivery.domain.model.*;
 import org.example.fooddelivery.domain.repo.OrderRepo;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -87,19 +88,35 @@ public class OrderRepoImpl implements OrderRepo {
         String sql = """
                     SELECT
                         o.id AS order_id, o.order_date, o.status, o.total_price,
-                        u.id AS user_id, u.name AS user_name, u.email, u.password, u.telegram, u.phone, u.address
+                        u.id AS user_id, u.name AS user_name, u.email, u.password, u.telegram, u.phone, u.address,
+                        mi.id AS menu_item_id, mi.name AS menu_item_name, mi.menu_category, mi.price AS menu_item_price
                     FROM orders o
                     JOIN users u ON o.user_id = u.id
                     JOIN orders_menu_items omi ON o.id = omi.order_id
+                    JOIN menu_items mi ON omi.menu_item_id = mi.id
                     WHERE o.user_id = :user_id
                     ORDER BY o.id
                 """;
-        return template.query(sql,
+        return template.query(
+                sql,
                 new MapSqlParameterSource("user_id", user.getId()),
-                (rs, rowNum) -> {
-                    IOrder order = createOrderFromRs(rs);
-                    order.setUser(createUserFromRS(rs));
-                    return order;
+                (ResultSetExtractor<List<IOrder>>) rs -> {
+                    Map<Long, IOrder> orderMap = new LinkedHashMap<>();
+                    while (rs.next()) {
+                        Long orderId = rs.getLong("order_id");
+                        IOrder order = orderMap.computeIfAbsent(orderId, id -> {
+                            try {
+                                IOrder newOrder = createOrderFromRs(rs);
+                                newOrder.setUser(createUserFromRS(rs));
+                                newOrder.setItemList(new ArrayList<>());
+                                return newOrder;
+                            } catch (SQLException e) {
+                                throw new RuntimeException("Failed to get order by status");
+                            }
+                        });
+                        order.getItemList().add(createMenuItemFromRS(rs));
+                    }
+                    return new ArrayList<>(orderMap.values());
                 });
     }
 

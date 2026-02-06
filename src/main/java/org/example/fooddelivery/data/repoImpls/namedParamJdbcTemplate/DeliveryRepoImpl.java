@@ -35,7 +35,7 @@ public class DeliveryRepoImpl implements DeliveryRepo {
                         .addValue("phone", delivery.getPhone())
                         .addValue("delivery_time", Timestamp.valueOf(delivery.getDeliveryTime()))
                         .addValue("order_id", delivery.getOrder().getId()),
-                new GeneratedKeyHolder(),
+                keyHolder,
                 new String[]{"id"});
 
         if (affectedRow == 0) throw new RuntimeException("Failed to save delivery");
