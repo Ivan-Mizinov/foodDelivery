@@ -10,11 +10,11 @@ import java.math.BigDecimal;
 
 import static org.example.fooddelivery.domain.model.MenuCategory.*;
 
-@Component
+//@Component
 public class ApplicationStartupRunner implements CommandLineRunner {
     private final MenuItemRepo menuItemRepo;
 
-    public ApplicationStartupRunner(@Qualifier("MRwJT") MenuItemRepo menuItemRepo) {
+    public ApplicationStartupRunner(@Qualifier("MRwJooq") MenuItemRepo menuItemRepo) {
         this.menuItemRepo = menuItemRepo;
     }
 
