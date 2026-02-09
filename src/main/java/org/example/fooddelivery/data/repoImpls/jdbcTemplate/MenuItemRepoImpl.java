@@ -35,7 +35,7 @@ public class MenuItemRepoImpl implements MenuItemRepo {
                     PreparedStatement ps = con.prepareStatement(sql, new String[]{"id"});
                     ps.setLong(1, menuItem.getId());
                     ps.setString(2, menuItem.getName());
-                    ps.setString(3, menuItem.getCategory().name());
+                    ps.setString(3, menuItem.getMenuCategory().name());
                     ps.setBigDecimal(4, menuItem.getPrice());
                     return ps;
                 }, keyHolder);
@@ -50,7 +50,7 @@ public class MenuItemRepoImpl implements MenuItemRepo {
 
         String sql = "UPDATE menu_items SET name = ?, menu_category = ?, price = ? WHERE id = ?";
 
-        jdbcTemplate.update(sql, menuItem.getName(), menuItem.getCategory().name(), menuItem.getPrice(), menuItem.getId());
+        jdbcTemplate.update(sql, menuItem.getName(), menuItem.getMenuCategory().name(), menuItem.getPrice(), menuItem.getId());
         return menuItem;
     }
 

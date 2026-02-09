@@ -7,8 +7,8 @@ public interface IMenuItem {
     void setId(Long id);
     String getName();
     void setName(String name);
-    MenuCategory getCategory();
-    void setCategory(MenuCategory category);
+    MenuCategory getMenuCategory();
+    void setMenuCategory(MenuCategory category);
     BigDecimal getPrice();
     void setPrice(BigDecimal price);
 }

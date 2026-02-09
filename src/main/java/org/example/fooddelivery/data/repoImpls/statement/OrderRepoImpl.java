@@ -151,7 +151,7 @@ public class OrderRepoImpl implements OrderRepo {
                     IMenuItem menuItem = MenuItem.builder()
                             .id(rs.getLong("menu_item_id"))
                             .name(rs.getString("menu_item_name"))
-                            .category(MenuCategory.valueOf(rs.getString("menu_item_category")))
+                            .menuCategory(MenuCategory.valueOf(rs.getString("menu_item_category")))
                             .price(rs.getBigDecimal("menu_item_price"))
                             .build();
                     order.getItemList().add(menuItem);

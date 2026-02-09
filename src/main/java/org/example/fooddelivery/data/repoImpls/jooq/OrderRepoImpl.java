@@ -155,7 +155,7 @@ public class OrderRepoImpl implements OrderRepo {
         return MenuItem.builder()
                 .id(record.getValue("menu_item_id", Long.class))
                 .name(record.getValue("menu_item_name", String.class))
-                .category(MenuCategory.valueOf(record.getValue(MENU_ITEMS.MENU_CATEGORY)))
+                .menuCategory(MenuCategory.valueOf(record.getValue(MENU_ITEMS.MENU_CATEGORY)))
                 .price(record.getValue(MENU_ITEMS.PRICE))
                 .build();
     }

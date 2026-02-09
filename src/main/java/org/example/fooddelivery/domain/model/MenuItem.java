@@ -14,6 +14,6 @@ import java.math.BigDecimal;
 public class MenuItem implements IMenuItem {
     private Long id;
     private String name;
-    private MenuCategory category;
+    private MenuCategory menuCategory;
     private BigDecimal price;
 }

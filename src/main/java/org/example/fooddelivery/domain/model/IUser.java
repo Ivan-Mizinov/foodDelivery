@@ -1,6 +1,7 @@
 package org.example.fooddelivery.domain.model;
 
 public interface IUser {
+
     Long getId();
     void setId(Long id);
     String getName();

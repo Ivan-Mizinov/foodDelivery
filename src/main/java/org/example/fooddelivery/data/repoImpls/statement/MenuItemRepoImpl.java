@@ -31,7 +31,7 @@ public class MenuItemRepoImpl implements MenuItemRepo {
         try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, menuItem.getId());
             ps.setString(2, menuItem.getName());
-            ps.setString(3, menuItem.getCategory().name());
+            ps.setString(3, menuItem.getMenuCategory().name());
             ps.setBigDecimal(4, menuItem.getPrice());
 
             int affectedRow = ps.executeUpdate();
@@ -55,7 +55,7 @@ public class MenuItemRepoImpl implements MenuItemRepo {
         String sql = "UPDATE menu_items SET name = ?, menu_category = ?, price = ? WHERE id = ?";
         try (PreparedStatement ps = dataSource.getConnection().prepareStatement(sql)) {
             ps.setString(1, menuItem.getName());
-            ps.setString(2, menuItem.getCategory().name());
+            ps.setString(2, menuItem.getMenuCategory().name());
             ps.setBigDecimal(3, menuItem.getPrice());
             ps.setLong(4, menuItem.getId());
             int affectedRow = ps.executeUpdate();
@@ -79,7 +79,7 @@ public class MenuItemRepoImpl implements MenuItemRepo {
                     return MenuItem.builder()
                             .id(rs.getLong("id"))
                             .name(rs.getString("name"))
-                            .category(MenuCategory.valueOf(rs.getString("menu_category")))
+                            .menuCategory(MenuCategory.valueOf(rs.getString("menu_category")))
                             .price(rs.getBigDecimal("price"))
                             .build();
                 }
@@ -101,7 +101,7 @@ public class MenuItemRepoImpl implements MenuItemRepo {
                     menuItems.add(MenuItem.builder()
                             .id(rs.getLong("id"))
                             .name(rs.getString("name"))
-                            .category(MenuCategory.valueOf(rs.getString("menu_category")))
+                            .menuCategory(MenuCategory.valueOf(rs.getString("menu_category")))
                             .price(rs.getBigDecimal("price"))
                             .build());
                 }

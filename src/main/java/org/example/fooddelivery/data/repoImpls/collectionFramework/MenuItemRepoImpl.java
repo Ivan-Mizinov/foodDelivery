@@ -38,7 +38,7 @@ public class MenuItemRepoImpl implements MenuItemRepo {
     @Override
     public List<IMenuItem> getMenuItemsByCategory(MenuCategory category) {
         return items.stream()
-                .filter(menuItem -> menuItem.getCategory().equals(category))
+                .filter(menuItem -> menuItem.getMenuCategory().equals(category))
                 .toList();
     }
 

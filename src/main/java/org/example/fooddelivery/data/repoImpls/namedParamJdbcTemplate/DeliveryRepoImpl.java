@@ -131,7 +131,7 @@ public class DeliveryRepoImpl implements DeliveryRepo {
         return MenuItem.builder()
                 .id(rs.getLong("menu_item_id"))
                 .name(rs.getString("menu_item_name"))
-                .category(MenuCategory.valueOf(rs.getString("menu_category")))
+                .menuCategory(MenuCategory.valueOf(rs.getString("menu_category")))
                 .price(rs.getBigDecimal("price"))
                 .build();
     }

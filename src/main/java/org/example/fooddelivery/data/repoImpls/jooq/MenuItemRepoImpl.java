@@ -25,11 +25,11 @@ public class MenuItemRepoImpl implements MenuItemRepo {
         int affectedRow = dslContext.insertInto(MENU_ITEMS)
                 .set(MENU_ITEMS.ID, menuItem.getId())
                 .set(MENU_ITEMS.NAME, menuItem.getName())
-                .set(MENU_ITEMS.MENU_CATEGORY, menuItem.getCategory().name())
+                .set(MENU_ITEMS.MENU_CATEGORY, menuItem.getMenuCategory().name())
                 .set(MENU_ITEMS.PRICE, menuItem.getPrice())
                 .onDuplicateKeyUpdate()
                 .set(MENU_ITEMS.NAME, menuItem.getName())
-                .set(MENU_ITEMS.MENU_CATEGORY, menuItem.getCategory().name())
+                .set(MENU_ITEMS.MENU_CATEGORY, menuItem.getMenuCategory().name())
                 .set(MENU_ITEMS.PRICE, menuItem.getPrice())
                 .execute();
 
@@ -43,7 +43,7 @@ public class MenuItemRepoImpl implements MenuItemRepo {
         if (menuItem == null) throw new IllegalArgumentException("menuItem cannot be null");
         int affectedRow = dslContext.update(MENU_ITEMS)
                 .set(MENU_ITEMS.NAME, menuItem.getName())
-                .set(MENU_ITEMS.MENU_CATEGORY, menuItem.getCategory().name())
+                .set(MENU_ITEMS.MENU_CATEGORY, menuItem.getMenuCategory().name())
                 .set(MENU_ITEMS.PRICE, menuItem.getPrice())
                 .execute();
         if (affectedRow == 0) throw new RuntimeException("Failed to update menuItem");

@@ -1,6 +1,5 @@
 package org.example.fooddelivery.domain.model;
 
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,10 +14,4 @@ public class User implements IUser {
     private String phone;
     private String telegram;
     private String address;
-
-    @PostConstruct
-    public void init() {
-        System.out.println("init method is called");
-        this.setTelegram("@telegram" + this.id);
-    }
 }
