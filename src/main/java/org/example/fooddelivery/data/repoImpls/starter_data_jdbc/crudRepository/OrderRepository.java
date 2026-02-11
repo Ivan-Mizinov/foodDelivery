@@ -1,6 +1,6 @@
 package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository;
 
-import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.entity.OrderEntity;
+import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.OrderEntity;
 import org.example.fooddelivery.domain.model.OrderStatus;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;

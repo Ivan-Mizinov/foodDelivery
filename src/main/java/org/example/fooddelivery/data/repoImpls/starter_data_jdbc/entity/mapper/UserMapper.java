@@ -1,6 +1,6 @@
-package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.mapper;
+package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper;
 
-import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.entity.UserEntity;
+import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.UserEntity;
 import org.example.fooddelivery.domain.model.IUser;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

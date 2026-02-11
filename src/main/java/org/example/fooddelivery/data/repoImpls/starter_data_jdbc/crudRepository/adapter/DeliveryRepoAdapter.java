@@ -1,8 +1,8 @@
 package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.adapter;
 
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.DeliveryRepository;
-import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.entity.DeliveryEntity;
-import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.mapper.DeliveryMapper;
+import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.DeliveryEntity;
+import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper.DeliveryMapper;
 import org.example.fooddelivery.domain.model.IDelivery;
 import org.example.fooddelivery.domain.repo.DeliveryRepo;
 import org.springframework.beans.factory.annotation.Qualifier;

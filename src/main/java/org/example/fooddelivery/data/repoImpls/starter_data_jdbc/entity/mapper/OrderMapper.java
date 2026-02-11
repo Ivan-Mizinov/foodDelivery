@@ -1,6 +1,6 @@
-package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.mapper;
+package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper;
 
-import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.entity.OrderEntity;
+import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.OrderEntity;
 import org.example.fooddelivery.domain.model.IMenuItem;
 import org.example.fooddelivery.domain.model.IOrder;
 import org.example.fooddelivery.domain.model.IUser;

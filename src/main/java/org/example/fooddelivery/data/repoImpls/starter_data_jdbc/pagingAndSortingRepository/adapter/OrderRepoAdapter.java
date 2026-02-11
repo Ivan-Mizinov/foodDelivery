@@ -1,39 +1,41 @@
-package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.adapter;
+package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.pagingAndSortingRepository.adapter;
 
-import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.MenuItemRepository;
-import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.OrderRepository;
-import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.UserRepository;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.OrderEntity;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper.MenuItemMapper;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper.OrderMapper;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper.UserMapper;
+import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.pagingAndSortingRepository.MenuItemPSRepository;
+import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.pagingAndSortingRepository.OrderPSRepository;
+import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.pagingAndSortingRepository.UserPSRepository;
 import org.example.fooddelivery.domain.model.IMenuItem;
 import org.example.fooddelivery.domain.model.IOrder;
 import org.example.fooddelivery.domain.model.IUser;
 import org.example.fooddelivery.domain.model.OrderStatus;
 import org.example.fooddelivery.domain.repo.OrderRepo;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-@Component("OrderRepoAdapterCrud")
+@Component("OrderRepoAdapterPS")
 public class OrderRepoAdapter implements OrderRepo {
-    private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
-    private final MenuItemRepository menuItemRepository;
+    private final OrderPSRepository orderRepository;
+    private final UserPSRepository userRepository;
+    private final MenuItemPSRepository menuItemRepository;
+
     private final OrderMapper orderMapper;
     private final UserMapper userMapper;
     private final MenuItemMapper menuItemMapper;
 
-    public OrderRepoAdapter(@Qualifier("OrderRepoExtCrudRepo") OrderRepository repository,
-                            @Qualifier("UserRepoExtCrudRepo") UserRepository userRepo,
-                            @Qualifier("MenuItemRepoExtCrudRepo") MenuItemRepository menuItemRepo,
-                            OrderMapper mapper, UserMapper userMapper, MenuItemMapper menuItemMapper) {
-        this.orderRepository = repository;
-        this.userRepository = userRepo;
-        this.menuItemRepository = menuItemRepo;
-        this.orderMapper = mapper;
+    public OrderRepoAdapter(OrderPSRepository orderRepository, UserPSRepository userRepository, MenuItemPSRepository menuItemRepository,
+                            OrderMapper orderMapper, UserMapper userMapper, MenuItemMapper menuItemMapper) {
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.menuItemRepository = menuItemRepository;
+        this.orderMapper = orderMapper;
         this.userMapper = userMapper;
         this.menuItemMapper = menuItemMapper;
     }
@@ -80,11 +82,8 @@ public class OrderRepoAdapter implements OrderRepo {
 
     @Override
     public List<IOrder> getOrdersByStatus(OrderStatus status) {
-        List<OrderEntity> orderEntities = orderRepository.getByStatus(status);
-
-        return orderEntities.stream()
-                .map(orderEntity -> getOrderById(orderEntity.getId()))
-                .toList();
+        Sort sort = Sort.by(Sort.Direction.DESC, "order_date");
+        return getOrdersByStatusOrderByOrderDateDesc(status, sort);
     }
 
     public IOrder getOrderById(Long orderId) {
@@ -98,5 +97,45 @@ public class OrderRepoAdapter implements OrderRepo {
                         .orElseThrow(() -> new RuntimeException("Menuitem not found with id: " + menuItemId)))
                 .toList();
         return orderMapper.getIOrderFromOrderEntity(orderEntity, user, menuItems);
+    }
+
+    public List<IOrder> getAllOrders(Sort sort) {
+        return orderRepository.findAll(sort).stream()
+                .map(orderEntity -> getOrderById(orderEntity.getId())).toList();
+    }
+
+    public Page<IOrder> getAllOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable)
+                .map(orderEntity -> getOrderById(orderEntity.getId()));
+    }
+
+    public Page<IOrder> getOrdersByUserId(Long userId, Pageable pageable) {
+        return orderRepository.findByUserId(userId, pageable)
+                .map(orderEntity -> getOrderById(orderEntity.getId()));
+    }
+
+    public Page<IOrder> getOrdersByStatus(OrderStatus status, Pageable pageable) {
+        return orderRepository.findByStatus(status, pageable)
+                .map(orderEntity -> getOrderById(orderEntity.getId()));
+    }
+
+    public List<IOrder> getOrdersByStatusOrderByOrderDateDesc(OrderStatus status, Sort sort) {
+        return orderRepository.findByStatusOrderByOrderDateDesc(status, sort).stream()
+                .map(orderEntity -> getOrderById(orderEntity.getId())).toList();
+    }
+
+    public Page<IOrder> getOrdersByUserIdAndStatus(Long userId, OrderStatus status, Pageable pageable) {
+        return orderRepository.findByUserIdAndStatus(userId, status, pageable)
+                .map(orderEntity -> getOrderById(orderEntity.getId()));
+    }
+
+    public Page<IOrder> getOrdersByTotalPriceGreaterThanEqual(BigDecimal totalPrice, Pageable pageable) {
+        return orderRepository.findByTotalPriceGreaterThanEqual(totalPrice, pageable)
+                .map(orderEntity -> getOrderById(orderEntity.getId()));
+    }
+
+    public List<IOrder> getOrdersByTotalPriceLessThanEqualOrderByOrderDateAsc(BigDecimal totalPrice, Sort sort) {
+        return orderRepository.findByTotalPriceLessThanEqualOrderByOrderDateAsc(totalPrice, sort).stream()
+                .map(orderEntity -> getOrderById(orderEntity.getId())).toList();
     }
 }

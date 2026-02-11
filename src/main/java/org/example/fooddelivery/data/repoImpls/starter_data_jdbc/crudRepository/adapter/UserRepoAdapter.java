@@ -1,7 +1,7 @@
 package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.adapter;
 
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.UserRepository;
-import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.mapper.UserMapper;
+import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper.UserMapper;
 import org.example.fooddelivery.domain.model.IUser;
 import org.example.fooddelivery.domain.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Qualifier;

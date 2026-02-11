@@ -1,24 +1,26 @@
-package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.adapter;
+package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.pagingAndSortingRepository.adapter;
 
-import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.MenuItemRepository;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.MenuItemEntity;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper.MenuItemMapper;
+import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.pagingAndSortingRepository.MenuItemPSRepository;
 import org.example.fooddelivery.domain.model.IMenuItem;
 import org.example.fooddelivery.domain.model.MenuCategory;
 import org.example.fooddelivery.domain.repo.MenuItemRepo;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-@Component("MenuItemRepoAdapterCrud")
+@Component("MenuItemRepoAdapterPS")
 public class MenuItemRepoAdapter implements MenuItemRepo {
-    private final MenuItemRepository repository;
+    private final MenuItemPSRepository repository;
     private final MenuItemMapper mapper;
 
-    public MenuItemRepoAdapter(@Qualifier("MenuItemRepoExtCrudRepo") MenuItemRepository repository,
-                               MenuItemMapper mapper) {
+    public MenuItemRepoAdapter(MenuItemPSRepository repository, MenuItemMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
@@ -69,5 +71,32 @@ public class MenuItemRepoAdapter implements MenuItemRepo {
         repository.delete(
                 mapper.getMenuItemEntityFromIMenuItem(menuItem)
         );
+    }
+
+    public List<IMenuItem> getAllMenuItems(Sort sort) {
+        return repository.findAll(sort).stream()
+                .map(mapper::getIMenuItemFromMenuItemEntity).toList();
+    }
+
+    public Page<IMenuItem> getAllMenuItems(Pageable pageable) {
+        return repository.findAll(pageable).map(mapper::getIMenuItemFromMenuItemEntity);
+    }
+
+    public Page<IMenuItem> getMenuItemsByCategory(MenuCategory category, Pageable pageable) {
+        return repository.findByMenuCategory(category, pageable).map(mapper::getIMenuItemFromMenuItemEntity);
+    }
+
+    public List<IMenuItem> getMenuItemsByCategoryOrderByPriceAsc(MenuCategory category, Sort sort) {
+        return repository.findByMenuCategoryOrderByPriceAsc(category, sort).stream()
+                .map(mapper::getIMenuItemFromMenuItemEntity).toList();
+    }
+
+    public Page<IMenuItem> getMenuItemsByPriceLessThanEqual(BigDecimal price, Pageable pageable) {
+        return repository.findByPriceLessThanEqual(price, pageable).map(mapper::getIMenuItemFromMenuItemEntity);
+    }
+
+    public List<IMenuItem> getMenuItemsByPriceGreaterThanEqualOrderByNameAsc(BigDecimal price, Sort sort) {
+        return repository.findByPriceGreaterThanEqualOrderByNameAsc(price, sort).stream()
+                .map(mapper::getIMenuItemFromMenuItemEntity).toList();
     }
 }

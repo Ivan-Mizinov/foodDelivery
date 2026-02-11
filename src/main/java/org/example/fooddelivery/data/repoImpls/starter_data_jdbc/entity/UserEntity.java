@@ -1,22 +1,23 @@
-package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.entity;
+package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.fooddelivery.domain.model.IUser;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDateTime;
-
 @Data @Builder
 @AllArgsConstructor @NoArgsConstructor
-@Table("deliveries")
-public class DeliveryEntity {
+@Table("users")
+public class UserEntity implements IUser {
     @Id
     private Long id;
-    private String address;
+    private String name;
+    private String email;
+    private String password;
     private String phone;
-    private LocalDateTime deliveryTime;
-    private Long orderId;
+    private String telegram;
+    private String address;
 }

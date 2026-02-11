@@ -1,4 +1,4 @@
-package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.entity;
+package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -22,7 +22,7 @@
 		</thead>
 		<tbody>
 			<tr th:each="order : ${newOrders}">
-				<td th:text="${order.orderDate}"></td>
+				<td th:text="${order.orderDate.format(T(java.time.format.DateTimeFormatter).ofPattern('dd.MM.yyyy HH:mm'))}"></td>
 				<td th:text="${order.user.name}"></td>
 				<td th:text="${order.user.address}"></td>
 				<td th:text="${order.user.phone}"></td>
