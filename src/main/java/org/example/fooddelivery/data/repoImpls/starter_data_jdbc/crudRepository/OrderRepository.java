@@ -17,11 +17,9 @@ public interface OrderRepository extends CrudRepository<OrderEntity, Long> {
     int updateOrderStatus(@Param("id") Long orderId,
                                   @Param("status") OrderStatus status);
 
-    @Query("SELECT * FROM orders WHERE user_id = :user_id")
-    List<OrderEntity> getByUserId(@Param("user_id") Long userId);
+    List<OrderEntity> getByUserId(Long userId);
 
-    @Query("SELECT * FROM orders WHERE status = :status")
-    List<OrderEntity> getOrdersByStatus(@Param("status") OrderStatus status);
+    List<OrderEntity> getByStatus(OrderStatus status);
 
     @Modifying
     @Query("INSERT INTO orders_menu_items (order_id, menu_item_id) VALUES (:order_id, :menu_item_id)")

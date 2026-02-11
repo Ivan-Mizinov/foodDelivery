@@ -69,7 +69,8 @@ public class OrderAndDeliveryController {
                 .address(sessionInfoService.getAddress())
                 .build();
 
-        orderService.createOrder(delivery.getOrder());
+        IOrder savedOrder = orderService.createOrder(delivery.getOrder());
+        delivery.setOrder(savedOrder);
         deliveryService.createDelivery(delivery);
 
         return "redirect:/menu";

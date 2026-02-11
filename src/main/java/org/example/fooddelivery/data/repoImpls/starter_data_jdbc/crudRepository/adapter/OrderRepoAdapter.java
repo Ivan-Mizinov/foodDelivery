@@ -80,7 +80,7 @@ public class OrderRepoAdapter implements OrderRepo {
 
     @Override
     public List<IOrder> getOrdersByStatus(OrderStatus status) {
-        List<OrderEntity> orderEntities = orderRepository.getOrdersByStatus(status);
+        List<OrderEntity> orderEntities = orderRepository.getByStatus(status);
 
         return orderEntities.stream().map(orderEntity -> {
             IUser user = userRepository.findById(orderEntity.getUserId())
@@ -96,7 +96,7 @@ public class OrderRepoAdapter implements OrderRepo {
         }).toList();
     }
 
-    private IOrder getOrderById(Long orderId) {
+    public IOrder getOrderById(Long orderId) {
         OrderEntity orderEntity = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
         IUser user = userMapper.getIUserFromUserEntity(userRepository.findById(orderEntity.getUserId())
