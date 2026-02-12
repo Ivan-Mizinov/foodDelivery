@@ -20,6 +20,8 @@ public class ModelMapperConf {
                 .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setSkipNullEnabled(true);
 
+        //        for starter_data_jdbc
+        /*
         modelMapper.typeMap(IOrder.class, OrderEntity.class)
                 .addMappings(mapper ->
                         mapper.skip(OrderEntity::setUserId));
@@ -37,6 +39,7 @@ public class ModelMapperConf {
         modelMapper.typeMap(DeliveryEntity.class, IDelivery.class)
                 .addMappings(mapper ->
                         mapper.skip(IDelivery::setOrder));
+*/
 
         return modelMapper;
     }

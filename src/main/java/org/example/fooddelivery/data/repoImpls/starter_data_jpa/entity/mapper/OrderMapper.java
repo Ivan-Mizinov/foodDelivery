@@ -1,12 +1,13 @@
 package org.example.fooddelivery.data.repoImpls.starter_data_jpa.entity.mapper;
 
 import org.example.fooddelivery.data.repoImpls.starter_data_jpa.entity.OrderEntity;
+import org.example.fooddelivery.data.repoImpls.starter_data_jpa.entity.UserEntity;
 import org.example.fooddelivery.domain.model.IOrder;
 import org.example.fooddelivery.domain.model.Order;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-//@Component
+@Component("OrderMapper_JPA")
 public class OrderMapper {
 
     private final ModelMapper modelMapper;
@@ -17,11 +18,15 @@ public class OrderMapper {
 
     public OrderEntity getOrderEntityFromIOrder(IOrder order) {
         if (order == null) return null;
-        return modelMapper.map(order, OrderEntity.class);
+        OrderEntity orderEntity = modelMapper.map(order, OrderEntity.class);
+        orderEntity.setUser((UserEntity) order.getUser());
+        return orderEntity;
     }
 
     public IOrder getIOrderFromOrderEntity(OrderEntity orderEntity) {
         if (orderEntity == null) return null;
-        return modelMapper.map(orderEntity, IOrder.class);
+        IOrder order = modelMapper.map(orderEntity, Order.class);
+        order.setUser(orderEntity.getUser());
+        return order;
     }
 }

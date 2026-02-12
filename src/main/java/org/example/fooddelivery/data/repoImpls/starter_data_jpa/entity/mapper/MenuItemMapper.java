@@ -5,7 +5,7 @@ import org.example.fooddelivery.domain.model.IMenuItem;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-//@Component
+@Component("MenuItemMapper_JPA")
 public class MenuItemMapper {
 
     private final ModelMapper modelMapper;

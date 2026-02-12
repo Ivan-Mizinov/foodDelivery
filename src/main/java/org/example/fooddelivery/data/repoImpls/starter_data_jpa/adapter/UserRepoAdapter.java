@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Component("URwJPA")
+@Component("UserRepoAdapter_JPA")
 public class UserRepoAdapter implements UserRepo {
 
     private final UserJpaRepository userRepository;
