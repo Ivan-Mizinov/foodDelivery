@@ -8,10 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+
 @Slf4j
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
+@SessionAttributes("filteredOrders")
 public class AdminController {
 
     private final OrderService orderService;
@@ -19,6 +22,9 @@ public class AdminController {
     @GetMapping
     public String showAdminPanel(Model model) {
         model.addAttribute("newOrders", orderService.getOrdersByStatus(OrderStatus.NEW));
+        if (!model.containsAttribute("filteredOrders")) {
+            model.addAttribute("filteredOrders", Collections.emptyList());
+        }
         return "admin";
     }
 

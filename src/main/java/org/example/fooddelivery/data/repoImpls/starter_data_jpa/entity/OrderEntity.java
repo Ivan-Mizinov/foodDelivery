@@ -16,11 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "orders")
-public class OrderEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class OrderEntity extends BaseEntity {
 
     @Column(nullable = false, name = "order_date")
     private LocalDateTime orderDate;

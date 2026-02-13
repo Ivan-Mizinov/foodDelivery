@@ -13,11 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "menu_items")
-public class MenuItemEntity implements IMenuItem {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class MenuItemEntity extends BaseEntity implements IMenuItem {
 
     @Column(nullable = false)
     private String name;

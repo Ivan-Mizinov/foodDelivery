@@ -13,11 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "deliveries")
-public class DeliveryEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class DeliveryEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String address;
