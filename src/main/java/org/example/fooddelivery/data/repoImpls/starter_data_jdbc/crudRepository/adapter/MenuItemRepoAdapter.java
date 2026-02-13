@@ -1,5 +1,6 @@
 package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.adapter;
 
+import jakarta.transaction.Transactional;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.MenuItemRepository;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.MenuItemEntity;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper.MenuItemMapper;
@@ -23,6 +24,7 @@ public class MenuItemRepoAdapter implements MenuItemRepo {
         this.mapper = mapper;
     }
 
+    @Transactional
     @Override
     public IMenuItem saveMenuItem(IMenuItem menuItem) {
         if (menuItem.getId() != null) {
@@ -44,6 +46,7 @@ public class MenuItemRepoAdapter implements MenuItemRepo {
         );
     }
 
+    @Transactional
     @Override
     public IMenuItem updateMenuItem(IMenuItem menuItem) {
         return saveMenuItem(menuItem);

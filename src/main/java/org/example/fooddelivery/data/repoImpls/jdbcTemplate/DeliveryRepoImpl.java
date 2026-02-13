@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class DeliveryRepoImpl implements DeliveryRepo {
 
     private final JdbcTemplate jdbcTemplate;
 
+    @Transactional
     @Override
     public IDelivery saveDelivery(IDelivery delivery) {
         if (delivery == null) throw new IllegalArgumentException("delivery cannot be null");
@@ -39,6 +41,7 @@ public class DeliveryRepoImpl implements DeliveryRepo {
         return delivery;
     }
 
+    @Transactional
     @Override
     public IDelivery updateDelivery(IDelivery delivery) {
         String sql = "UPDATE deliveries SET address=?, phone=?, delivery_time=?, order_id=? WHERE id=?";

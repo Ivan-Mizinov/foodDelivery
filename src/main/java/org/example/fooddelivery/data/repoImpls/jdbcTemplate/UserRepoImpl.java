@@ -32,12 +32,7 @@ public class UserRepoImpl implements UserRepo {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(sql, new String[]{"id"});
-            ps.setString(1, user.getName());
-            ps.setString(2, user.getEmail());
-            ps.setString(3, user.getPassword());
-            ps.setString(4, user.getTelegram());
-            ps.setString(5, user.getPhone());
-            ps.setString(6, user.getAddress());
+            org.example.fooddelivery.data.repoImpls.statement.UserRepoImpl.setUserParameters(user, ps);
             return ps;
         }, keyHolder);
 

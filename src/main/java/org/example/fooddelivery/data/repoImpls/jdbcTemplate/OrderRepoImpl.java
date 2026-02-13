@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.util.*;
@@ -17,6 +18,7 @@ public class OrderRepoImpl implements OrderRepo {
 
     private final JdbcTemplate jdbcTemplate;
 
+    @Transactional
     @Override
     public IOrder saveOrder(IOrder order) {
         if (order == null) throw new IllegalArgumentException("order cannot be null");
@@ -47,6 +49,7 @@ public class OrderRepoImpl implements OrderRepo {
         return order;
     }
 
+    @Transactional
     @Override
     public IOrder updateOrder(IOrder order) {
         if (order == null) throw new IllegalArgumentException("order cannot be null");
@@ -64,6 +67,7 @@ public class OrderRepoImpl implements OrderRepo {
         return order;
     }
 
+    @Transactional
     @Override
     public IOrder updateOrderStatus(Long orderId, OrderStatus status) {
         String sql = "UPDATE orders SET status = ? WHERE id = ?";

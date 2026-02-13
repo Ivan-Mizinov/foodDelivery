@@ -1,5 +1,6 @@
 package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.adapter;
 
+import jakarta.transaction.Transactional;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.UserRepository;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper.UserMapper;
 import org.example.fooddelivery.domain.model.IUser;
@@ -18,6 +19,7 @@ public class UserRepoAdapter implements UserRepo {
         this.userMapper = userMapper;
     }
 
+    @Transactional
     @Override
     public IUser saveUser(IUser iUser) {
         return userMapper.getIUserFromUserEntity(
@@ -26,6 +28,7 @@ public class UserRepoAdapter implements UserRepo {
         );
     }
 
+    @Transactional
     @Override
     public IUser updateUser(IUser iUser) {
         return saveUser(iUser);

@@ -9,6 +9,7 @@ import org.example.fooddelivery.domain.model.IDelivery;
 import org.example.fooddelivery.domain.repo.DeliveryRepo;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("DeliveryRepoAdapter_JPA")
 public class DeliveryRepoAdapter implements DeliveryRepo {
@@ -23,6 +24,7 @@ public class DeliveryRepoAdapter implements DeliveryRepo {
         this.mapper = deliveryMapper;
     }
 
+    @Transactional
     @Override
     public IDelivery saveDelivery(IDelivery delivery) {
         DeliveryEntity deliveryEntity = mapper.getDeliveryEntityFromIDelivery(delivery);
@@ -36,6 +38,7 @@ public class DeliveryRepoAdapter implements DeliveryRepo {
         return mapper.getIDeliveryFromDeliveryEntity(deliveryRepository.save(deliveryEntity));
     }
 
+    @Transactional
     @Override
     public IDelivery updateDelivery(IDelivery delivery) {
         return saveDelivery(delivery);

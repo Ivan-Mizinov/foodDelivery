@@ -1,5 +1,6 @@
 package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.adapter;
 
+import jakarta.transaction.Transactional;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.MenuItemRepository;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.OrderRepository;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.UserRepository;
@@ -38,6 +39,7 @@ public class OrderRepoAdapter implements OrderRepo {
         this.menuItemMapper = menuItemMapper;
     }
 
+    @Transactional
     @Override
     public IOrder saveOrder(IOrder order) {
         OrderEntity orderEntity = orderRepository.save(orderMapper.getOrderEntityFromIOrder(order));
@@ -46,6 +48,7 @@ public class OrderRepoAdapter implements OrderRepo {
         return orderMapper.getIOrderFromOrderEntity(orderEntity, order.getUser(), order.getItemList());
     }
 
+    @Transactional
     @Override
     public IOrder updateOrder(IOrder order) {
         OrderEntity existingOrderEntity = orderRepository.findById(order.getId())

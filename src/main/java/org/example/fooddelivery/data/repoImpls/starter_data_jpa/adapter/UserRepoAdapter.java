@@ -7,6 +7,7 @@ import org.example.fooddelivery.domain.model.IUser;
 import org.example.fooddelivery.domain.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ public class UserRepoAdapter implements UserRepo {
         this.userMapper = userMapper;
     }
 
+    @Transactional
     @Override
     public IUser saveUser(IUser user) {
         return userRepository.save(
@@ -29,6 +31,7 @@ public class UserRepoAdapter implements UserRepo {
         );
     }
 
+    @Transactional
     @Override
     public IUser updateUser(IUser user) {
         return saveUser(user);

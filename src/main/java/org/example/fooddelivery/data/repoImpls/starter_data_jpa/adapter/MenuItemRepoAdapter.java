@@ -7,6 +7,7 @@ import org.example.fooddelivery.domain.model.MenuCategory;
 import org.example.fooddelivery.domain.repo.MenuItemRepo;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class MenuItemRepoAdapter implements MenuItemRepo {
         this.mapper = mapper;
     }
 
+    @Transactional
     @Override
     public IMenuItem saveMenuItem(IMenuItem menuItem) {
         return mapper.getIMenuItemFromMenuItemEntity(
@@ -29,6 +31,7 @@ public class MenuItemRepoAdapter implements MenuItemRepo {
         );
     }
 
+    @Transactional
     @Override
     public IMenuItem updateMenuItem(IMenuItem menuItem) {
         return saveMenuItem(menuItem);

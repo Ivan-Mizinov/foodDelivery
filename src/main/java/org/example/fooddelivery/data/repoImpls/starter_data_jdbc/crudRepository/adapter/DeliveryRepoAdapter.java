@@ -1,5 +1,6 @@
 package org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.adapter;
 
+import jakarta.transaction.Transactional;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.crudRepository.DeliveryRepository;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.DeliveryEntity;
 import org.example.fooddelivery.data.repoImpls.starter_data_jdbc.entity.mapper.DeliveryMapper;
@@ -22,12 +23,14 @@ public class DeliveryRepoAdapter implements DeliveryRepo {
         this.orderRepoAdapter = orderRepoAdapter;
     }
 
+    @Transactional
     @Override
     public IDelivery saveDelivery(IDelivery delivery) {
         DeliveryEntity deliveryEntity = deliveryRepository.save(deliveryMapper.getDeliveryEntityFromIDelivery(delivery));
         return deliveryMapper.getIDeliveryFromDeliveryEntity(deliveryEntity, delivery.getOrder());
     }
 
+    @Transactional
     @Override
     public IDelivery updateDelivery(IDelivery delivery) {
         return saveDelivery(delivery);

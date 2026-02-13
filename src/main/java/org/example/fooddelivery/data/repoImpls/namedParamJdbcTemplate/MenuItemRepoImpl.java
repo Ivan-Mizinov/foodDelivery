@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +23,7 @@ public class MenuItemRepoImpl implements MenuItemRepo {
 
     private final NamedParameterJdbcTemplate template;
 
+    @Transactional
     @Override
     public IMenuItem saveMenuItem(IMenuItem menuItem) {
         if (menuItem == null) throw new IllegalArgumentException("menuItem cannot be null");
@@ -41,6 +43,7 @@ public class MenuItemRepoImpl implements MenuItemRepo {
         return menuItem;
     }
 
+    @Transactional
     @Override
     public IMenuItem updateMenuItem(IMenuItem menuItem) {
         if (menuItem == null) throw new IllegalArgumentException("menuItem cannot be null");

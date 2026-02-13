@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -24,6 +25,7 @@ public class UserRepoImpl implements UserRepo {
 
     private final NamedParameterJdbcTemplate template;
 
+    @Transactional
     @Override
     public IUser saveUser(IUser user) {
         if (user == null) throw new IllegalArgumentException("user cannot be null");
@@ -39,6 +41,7 @@ public class UserRepoImpl implements UserRepo {
         return user;
     }
 
+    @Transactional
     @Override
     public IUser updateUser(IUser user) {
         String sql = "UPDATE users SET name= :name, email= :email, password= :password, " +
