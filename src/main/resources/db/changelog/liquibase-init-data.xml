@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="2" author="Ivan Mizinov">
+        <insert tableName="users">
+            <column name="id" value="1"/>
+            <column name="name" value="Ivan Mizinov"/>
+            <column name="email" value="Ivan@com"/>
+            <column name="password" value="$2a$10$Rwd2A.tXDnFGs/s5oxcrw.ZissYoC00/vxsDyUyNlCjXROFghla/y"/>
+            <column name="telegram" value="@Ivan"/>
+            <column name="phone" value="85551234567"/>
+            <column name="address" value="г. Москва, ул. Тверская, д. 15"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="1"/>
+            <column name="name" value="Шашлык из свинины"/>
+            <column name="menu_category" value="MainMenu"/>
+            <column name="price" value="240"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="2"/>
+            <column name="name" value="Шашлык из говядины"/>
+            <column name="menu_category" value="MainMenu"/>
+            <column name="price" value="320"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="3"/>
+            <column name="name" value="Шашлык из баранины"/>
+            <column name="menu_category" value="MainMenu"/>
+            <column name="price" value="320"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="4"/>
+            <column name="name" value="Картофель Фри"/>
+            <column name="menu_category" value="MainMenu"/>
+            <column name="price" value="200"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="5"/>
+            <column name="name" value="Картофельное пюре"/>
+            <column name="menu_category" value="MainMenu"/>
+            <column name="price" value="180"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="6"/>
+            <column name="name" value="Рис на пару"/>
+            <column name="menu_category" value="MainMenu"/>
+            <column name="price" value="170"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="100"/>
+            <column name="name" value="Кофе"/>
+            <column name="menu_category" value="DrinksMenu"/>
+            <column name="price" value="50"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="101"/>
+            <column name="name" value="Чай"/>
+            <column name="menu_category" value="DrinksMenu"/>
+            <column name="price" value="50"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="200"/>
+            <column name="name" value="Кетчуп"/>
+            <column name="menu_category" value="SaucesMenu"/>
+            <column name="price" value="50"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="201"/>
+            <column name="name" value="Майонез"/>
+            <column name="menu_category" value="SaucesMenu"/>
+            <column name="price" value="30"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="202"/>
+            <column name="name" value="Сырный"/>
+            <column name="menu_category" value="SaucesMenu"/>
+            <column name="price" value="30"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="203"/>
+            <column name="name" value="Чесночный"/>
+            <column name="menu_category" value="SaucesMenu"/>
+            <column name="price" value="30"/>
+        </insert>
+
+        <insert tableName="menu_items">
+            <column name="id" value="204"/>
+            <column name="name" value="Кисло-Сладкий"/>
+            <column name="menu_category" value="SaucesMenu"/>
+            <column name="price" value="30"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

@@ -1,9 +1,9 @@
 INSERT INTO users (id, name, email, password, telegram, phone, address)
-VALUES (1, 'User1', 'user1@com', '$2a$10$Rwd2A.tXDnFGs/s5oxcrw.ZissYoC00/vxsDyUyNlCjXROFghla/y',
-        '@User1', 85551234567, 'City1 House1')
+VALUES (1, 'Ivan_Mizinov', 'Ivan@com', '$2a$10$Rwd2A.tXDnFGs/s5oxcrw.ZissYoC00/vxsDyUyNlCjXROFghla/y',
+        '@Ivan', 85551234567, 'г. Москва, ул. Тверская, д. 15')
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO menu_items VALUES
+INSERT INTO menu_items(id, name, menu_category, price) VALUES
 (1, 'Шашлык из свинины', 'MainMenu', 240),
 (2, 'Шашлык из говядины', 'MainMenu', 320),
 (3, 'Шашлык из баранины', 'MainMenu', 320),
