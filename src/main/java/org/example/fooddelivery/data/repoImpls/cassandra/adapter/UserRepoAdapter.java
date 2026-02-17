@@ -24,8 +24,7 @@ public class UserRepoAdapter implements UserRepo {
     @Override
     public IUser saveUser(IUser user) {
         UserEntity userEntity = userMapper.getUserEntityFromIUser(user);
-        if (userEntity.getId() == null) userEntity.setId(UUID.randomUUID());
-        return userMapper.getIUserFromUserEntity(userRepository.save(userMapper.getUserEntityFromIUser(user)));
+        return userMapper.getIUserFromUserEntity(userRepository.save(userEntity));
     }
 
     @Override
@@ -40,22 +39,15 @@ public class UserRepoAdapter implements UserRepo {
 
     @Override
     public void deleteUser(IUser user) {
-        userRepository.delete(userMapper.getUserEntityFromIUser(user));
+        deleteUserByEmail(user.getEmail());
     }
 
-    @Override
-    public IUser getUserById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("id cannot be null");
-        }
-        try {
-            UUID uuid = UUID.fromString(String.valueOf(id));
-            UserEntity userEntity = userRepository.findById(uuid).orElse(null);
-            return userEntity != null
-                    ? userMapper.getIUserFromUserEntity(userEntity)
-                    : null;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("id is not a valid UUID");
-        }
+    private void deleteUserByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity != null) userRepository.delete(userEntity);
+    }
+
+    public IUser getUserById(UUID id) {
+        return userMapper.getIUserFromUserEntity(userRepository.findById(id).orElse(null));
     }
 }

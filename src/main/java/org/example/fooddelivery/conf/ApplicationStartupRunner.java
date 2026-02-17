@@ -32,6 +32,18 @@ public class ApplicationStartupRunner implements CommandLineRunner {
                 "Шашлык из баранины",
                 MainMenu,
                 BigDecimal.valueOf(320)));
+        menuItemRepo.saveMenuItem(new MenuItem(4L,
+                "Картофель Фри",
+                MainMenu,
+                BigDecimal.valueOf(200)));
+        menuItemRepo.saveMenuItem(new MenuItem(5L,
+                "Картофельное пюре",
+                MainMenu,
+                BigDecimal.valueOf(180)));
+        menuItemRepo.saveMenuItem(new MenuItem(6L,
+                "Рис на пару",
+                MainMenu,
+                BigDecimal.valueOf(320)));
 
         menuItemRepo.saveMenuItem(new MenuItem(100L,
                 "Кофе",

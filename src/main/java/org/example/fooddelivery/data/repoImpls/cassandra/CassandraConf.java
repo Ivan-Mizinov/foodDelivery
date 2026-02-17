@@ -51,7 +51,7 @@ public class CassandraConf extends AbstractCassandraConfiguration {
 
     @Override
     protected @Nullable String getLocalDataCenter() {
-        return super.getLocalDataCenter();
+        return datacenter;
     }
 
     @Bean

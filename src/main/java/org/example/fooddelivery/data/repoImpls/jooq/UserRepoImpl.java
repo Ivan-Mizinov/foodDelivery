@@ -60,7 +60,6 @@ public class UserRepoImpl implements UserRepo {
                 .fetchOneInto(User.class);
     }
 
-    @Override
     public IUser getUserById(Long id) {
         return dslContext.selectFrom(USERS)
                 .where(USERS.ID.eq(id))

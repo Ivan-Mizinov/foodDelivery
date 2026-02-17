@@ -129,7 +129,6 @@ public class UserRepoImpl implements UserRepo {
          */
     }
 
-    @Override
     public IUser getUserById(Long id) {
         if (id == null || id <= 0) {
             log.warn("Invalid user ID: {}", id);

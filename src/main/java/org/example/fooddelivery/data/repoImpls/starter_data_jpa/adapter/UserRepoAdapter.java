@@ -47,7 +47,6 @@ public class UserRepoAdapter implements UserRepo {
         userRepository.delete(userMapper.getUserEntityFromIUser(user));
     }
 
-    @Override
     public IUser getUserById(Long id) {
         Optional<UserEntity> userEntity = userRepository.findById(id);
         return userEntity.map(userMapper::getIUserFromUserEntity).orElse(null);

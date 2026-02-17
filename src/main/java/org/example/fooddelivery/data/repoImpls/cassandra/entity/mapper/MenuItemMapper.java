@@ -4,29 +4,28 @@ import org.example.fooddelivery.data.repoImpls.cassandra.UUIDUtils;
 import org.example.fooddelivery.data.repoImpls.cassandra.entity.MenuItemEntity;
 import org.example.fooddelivery.domain.model.IMenuItem;
 import org.example.fooddelivery.domain.model.MenuItem;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component("MenuItemMapper_Cass")
 public class MenuItemMapper {
 
-    private final ModelMapper modelMapper;
-
-    public MenuItemMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
-
     public MenuItemEntity getMenuItemEntityFromIMenuItem(IMenuItem iMenuItem) {
         if (iMenuItem == null) return null;
-        MenuItemEntity menuItemEntity = modelMapper.map(iMenuItem, MenuItemEntity.class);
-        menuItemEntity.setId(UUIDUtils.getUUIDFromLong(iMenuItem.getId()));
-        return menuItemEntity;
+        MenuItemEntity entity = new MenuItemEntity();
+        entity.setId(UUIDUtils.getUUIDFromLong(iMenuItem.getId()));
+        entity.setName(iMenuItem.getName());
+        entity.setMenuCategory(iMenuItem.getMenuCategory());
+        entity.setPrice(iMenuItem.getPrice());
+        return entity;
     }
 
     public IMenuItem getIMenuItemFromMenuItemEntity(MenuItemEntity menuItemEntity) {
         if (menuItemEntity == null) return null;
-        IMenuItem iMenuItem = modelMapper.map(menuItemEntity, MenuItem.class);
-        iMenuItem.setId(UUIDUtils.getLongFromUUID(menuItemEntity.getId()));
-        return iMenuItem;
+        IMenuItem menuItem = new MenuItem();
+        menuItem.setId(UUIDUtils.getLongFromUUID(menuItemEntity.getId()));
+        menuItem.setName(menuItemEntity.getName());
+        menuItem.setMenuCategory(menuItemEntity.getMenuCategory());
+        menuItem.setPrice(menuItemEntity.getPrice());
+        return menuItem;
     }
 }

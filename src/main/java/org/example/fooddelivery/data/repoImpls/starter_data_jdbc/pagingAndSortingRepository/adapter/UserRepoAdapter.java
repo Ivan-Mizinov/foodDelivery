@@ -47,7 +47,6 @@ public class UserRepoAdapter implements UserRepo {
                 userMapper.getUserEntityFromIUser(iUser));
     }
 
-    @Override
     public IUser getUserById(Long id) {
         return userRepository.findById(id)
                 .map(userMapper::getIUserFromUserEntity)

@@ -73,7 +73,6 @@ public class UserRepoImpl implements UserRepo {
         }
     }
 
-    @Override
     public IUser getUserById(Long id) {
         String sql = "SELECT * FROM users WHERE id = :id";
 

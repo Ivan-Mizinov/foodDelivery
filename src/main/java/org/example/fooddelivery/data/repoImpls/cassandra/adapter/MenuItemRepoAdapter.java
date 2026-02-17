@@ -1,7 +1,7 @@
 package org.example.fooddelivery.data.repoImpls.cassandra.adapter;
 
 import org.example.fooddelivery.data.repoImpls.cassandra.MenuItemCassandraRepository;
-import org.example.fooddelivery.data.repoImpls.cassandra.entity.MenuItemEntity;
+import org.example.fooddelivery.data.repoImpls.cassandra.UUIDUtils;
 import org.example.fooddelivery.data.repoImpls.cassandra.entity.mapper.MenuItemMapper;
 import org.example.fooddelivery.domain.model.IMenuItem;
 import org.example.fooddelivery.domain.model.MenuCategory;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component("MenuItemRepoAdapter_Cass")
 public class MenuItemRepoAdapter implements MenuItemRepo {
@@ -38,18 +37,8 @@ public class MenuItemRepoAdapter implements MenuItemRepo {
 
     @Override
     public IMenuItem getMenuItemById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("id cannot be null");
-        }
-        try {
-            UUID uuid = UUID.fromString(String.valueOf(id));
-            MenuItemEntity menuItemEntity = repository.findById(uuid).orElse(null);
-            return menuItemEntity != null
-                    ? mapper.getIMenuItemFromMenuItemEntity(menuItemEntity)
-                    : null;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("id is not a valid UUID");
-        }
+        return repository.findById(UUIDUtils.getUUIDFromLong(id))
+                .map(mapper::getIMenuItemFromMenuItemEntity).orElse(null);
     }
 
     @Override
