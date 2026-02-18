@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MenuItemService extends MenuItemInterractor {
-    public MenuItemService(@Qualifier("MenuItemRepoAdapter_MongoDB") MenuItemRepo repo) {
+    public MenuItemService(@Qualifier("MenuItemRepoAdapter_Redis") MenuItemRepo repo) {
         super(repo);
     }
 }
