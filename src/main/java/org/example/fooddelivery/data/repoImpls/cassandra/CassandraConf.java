@@ -8,7 +8,7 @@ import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.CqlSessionFactoryBean;
 import org.springframework.data.cassandra.config.SchemaAction;
 
-@Configuration
+//@Configuration
 public class CassandraConf extends AbstractCassandraConfiguration {
 
     @Value("${spring.cassandra.keyspace-name}")

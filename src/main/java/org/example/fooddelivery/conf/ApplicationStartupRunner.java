@@ -14,7 +14,7 @@ import static org.example.fooddelivery.domain.model.MenuCategory.*;
 public class ApplicationStartupRunner implements CommandLineRunner {
     private final MenuItemRepo menuItemRepo;
 
-    public ApplicationStartupRunner(@Qualifier("MenuItemRepoAdapter_Cass") MenuItemRepo menuItemRepo) {
+    public ApplicationStartupRunner(@Qualifier("MenuItemRepoAdapter_MongoDB") MenuItemRepo menuItemRepo) {
         this.menuItemRepo = menuItemRepo;
     }
 
