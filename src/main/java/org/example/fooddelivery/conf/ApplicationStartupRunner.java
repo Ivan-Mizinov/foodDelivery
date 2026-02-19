@@ -14,7 +14,7 @@ import static org.example.fooddelivery.domain.model.MenuCategory.*;
 public class ApplicationStartupRunner implements CommandLineRunner {
     private final MenuItemRepo menuItemRepo;
 
-    public ApplicationStartupRunner(@Qualifier("MenuItemRepoAdapter_Redis") MenuItemRepo menuItemRepo) {
+    public ApplicationStartupRunner(@Qualifier("MenuItemRepoAdapter_Neo4j") MenuItemRepo menuItemRepo) {
         this.menuItemRepo = menuItemRepo;
     }
 
